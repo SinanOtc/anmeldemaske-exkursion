@@ -8,9 +8,18 @@ importers:
 
   .:
     dependencies:
+      '@fontsource-variable/source-code-pro':
+        specifier: ^5.2.7
+        version: 5.2.7
+      '@fontsource-variable/source-sans-3':
+        specifier: ^5.2.9
+        version: 5.2.9
       pinia:
         specifier: ^3.0.3
         version: 3.0.3(typescript@5.8.3)(vue@3.5.21(typescript@5.8.3))
+      sit-onyx:
+        specifier: ^1.0.0
+        version: 1.0.0(@sit-onyx/icons@1.0.0)(typescript@5.8.3)(vue@3.5.21(typescript@5.8.3))
       vue:
         specifier: ^3.5.18
         version: 3.5.21(typescript@5.8.3)
@@ -347,6 +356,12 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@fontsource-variable/source-code-pro@5.2.7':
+    resolution: {integrity: sha512-kZ0VNwnhvSA7vu5MaiO52eicQ4zC+k+8HBLZb+1js0MK/RngLy25NEUFB1y/AKd0ZMwru88T433QBcFf9m/huw==}
+
+  '@fontsource-variable/source-sans-3@5.2.9':
+    resolution: {integrity: sha512-K9fkQbb0BNnRmmaU+Gpr6U4IaYKpNzA8t07J6aam2i+6v84RT72MVpar8OBr3yYAEznj4riKivPQ2nAF2fPKsw==}
+
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
 
@@ -480,6 +495,10 @@ packages:
   '@sindresorhus/merge-streams@4.0.0':
     resolution: {integrity: sha512-tlqY9xq5ukxTUZBmoOp+m61cqwQD5pHJtFY3Mn8CA8ps6yghLH/Hw8UPdqg4OLmFW3IFlcXnQNmo/dh8HzXYIQ==}
     engines: {node: '>=18'}
+
+  '@sit-onyx/icons@1.0.0':
+    resolution: {integrity: sha512-/P/tJDMQMWKoRgnbfCyRwMhtVuwkg7zLJt09QEYy1y2m+ozjcd878Hwt/v7KGhKFlqYIG5JxHtjU2tDXSe16Uw==}
+    engines: {node: '>=20'}
 
   '@tsconfig/node22@22.0.2':
     resolution: {integrity: sha512-Kmwj4u8sDRDrMYRoN9FDEcXD8UpBSaPQQ24Gz+Gamqfm7xxn+GBR7ge/Z7pK8OXNGyUzbSwJj+TH6B+DS/epyA==}
@@ -938,6 +957,14 @@ packages:
     resolution: {integrity: sha512-2wcC/oGxHis/BoHkkPwldgiPSYcpZK3JU28WoMVv55yHJgcZ8rlXvuG9iZggz+sU1d4bRgIGASwyWqjxu3FM0g==}
     engines: {node: '>=18'}
 
+  sit-onyx@1.0.0:
+    resolution: {integrity: sha512-MP+3RSAPLI6v6q49Cnk1T5oSd4W8LX91+4g7wT9ZKkGrSdmqgwhWpacKERz6FQiyQiaw+I7q+tCtIFsDTHGInQ==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      '@sit-onyx/icons': ^1.0.0
+      typescript: '>= 5.2.2'
+      vue: '>= 3.5.0'
+
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
@@ -1369,6 +1396,10 @@ snapshots:
   '@esbuild/win32-x64@0.25.10':
     optional: true
 
+  '@fontsource-variable/source-code-pro@5.2.7': {}
+
+  '@fontsource-variable/source-sans-3@5.2.9': {}
+
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
@@ -1458,6 +1489,8 @@ snapshots:
   '@sec-ant/readable-stream@0.4.1': {}
 
   '@sindresorhus/merge-streams@4.0.0': {}
+
+  '@sit-onyx/icons@1.0.0': {}
 
   '@tsconfig/node22@22.0.2': {}
 
@@ -1943,6 +1976,12 @@ snapshots:
       '@polka/url': 1.0.0-next.29
       mrmime: 2.0.1
       totalist: 3.0.1
+
+  sit-onyx@1.0.0(@sit-onyx/icons@1.0.0)(typescript@5.8.3)(vue@3.5.21(typescript@5.8.3)):
+    dependencies:
+      '@sit-onyx/icons': 1.0.0
+      typescript: 5.8.3
+      vue: 3.5.21(typescript@5.8.3)
 
   source-map-js@1.2.1: {}
 

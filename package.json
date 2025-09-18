@@ -15,7 +15,10 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@fontsource-variable/source-code-pro": "^5.2.7",
+    "@fontsource-variable/source-sans-3": "^5.2.9",
     "pinia": "^3.0.3",
+    "sit-onyx": "^1.0.0",
     "vue": "^3.5.18",
     "vue-router": "^4.5.1"
   },

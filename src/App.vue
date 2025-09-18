@@ -1,85 +1,65 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { RouterLink, RouterView, useRoute } from 'vue-router'
+import { computed, ref } from 'vue'
+
+import {
+  OnyxAppLayout,
+  OnyxPageLayout,
+  OnyxProgressSteps,
+  type ControlledProgressStep,
+} from 'sit-onyx'
+
+const route = useRoute()
+
+const activeStep = computed(() => {
+  const pathNum = Number(route.path.replace('/', ''))
+  return pathNum
+})
+
+const steps: ControlledProgressStep[] = [
+  { label: 'Exkursionswahl' },
+  { label: 'Datenerfassung' },
+  { label: 'Checkliste' },
+]
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <OnyxAppLayout>
+    <OnyxPageLayout>
+      <!--   <template #sidebar>
+        <OnyxSidebar label="Exkursionsportal" :temporary="{ open: isOpen }" @close="isOpen = false">
+          <template #description> Scheibovic </template>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+          <div class="sidebar__content">
+            <RouterLink to="/">Startseite </RouterLink>
+            <RouterLink to="/about">Über uns</RouterLink>
+          </div>
+        </OnyxSidebar>
+      </template> -->
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
+      <header style="width: 100%">
+        <nav style="display: flex; justify-content: center">
+          <OnyxProgressSteps v-model="activeStep" :steps="steps" />
+        </nav>
+      </header>
 
-  <RouterView />
+      <!-- page content -->
+      <!--  <OnyxHeadline is="h1">Page content</OnyxHeadline>
+      <OnyxButton class="button" label="Open sidebar" @click="isOpen = true" /> -->
+
+      <main>
+        <RouterView />
+      </main>
+
+      <footer style="bottom: 0">
+        <RouterLink to="about">About</RouterLink>
+      </footer>
+    </OnyxPageLayout>
+  </OnyxAppLayout>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+<style>
+main {
+  min-height: 80dvh;
 }
 </style>
