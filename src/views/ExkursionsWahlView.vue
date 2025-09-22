@@ -1,15 +1,29 @@
 <script setup lang="ts">
 import { OnyxInput, OnyxButton, OnyxHeadline, OnyxForm, useToast } from 'sit-onyx'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAnmeldungStore } from '@/stores/anmeldungsStore'
 
 const inputValue = ref<string>('')
 
 const router = useRouter()
 const toast = useToast()
+const store = useAnmeldungStore()
+
+onMounted(() => {
+  // Vorbelegen der ID aus Store (falls vorhanden)
+  inputValue.value = store.exkursion.id
+})
 
 const handleSubmit = () => {
-  // do something with your data here
+  // Exkursions-ID im Store speichern
+  store.setExkursion({
+    titel: store.exkursion.titel || '',
+    datum: store.exkursion.datum || '',
+    ort: store.exkursion.ort || '',
+    id: inputValue.value,
+  })
+
   toast.show({
     headline: 'Form submitted',
     description: inputValue.value,
@@ -20,7 +34,7 @@ const handleSubmit = () => {
 }
 </script>
 <template>
-  <OnyxHeadline is="h1">Exkursions-ID eingeben</OnyxHeadline>
+  <OnyxHeadline is="h2">Exkursions-ID eingeben</OnyxHeadline>
   <OnyxForm class="form" @submit.prevent="handleSubmit">
     <OnyxInput v-model="inputValue" label="Enter your ID" placeholder="ID eingeben..." />
     <OnyxButton label="Exkursions-ID bestätigen" type="submit" />

@@ -4,6 +4,7 @@ import { computed, ref } from 'vue'
 
 import {
   OnyxAppLayout,
+  OnyxHeadline,
   OnyxPageLayout,
   OnyxProgressSteps,
   type ControlledProgressStep,
@@ -18,8 +19,10 @@ const activeStep = computed(() => {
 
 const steps: ControlledProgressStep[] = [
   { label: 'Exkursionswahl' },
-  { label: 'Datenerfassung' },
+  { label: 'Persönliche Daten' },
+  { label: 'Notfallkontakt' },
   { label: 'Checkliste' },
+  { label: 'Zusammenfassung' },
 ]
 </script>
 
@@ -38,7 +41,17 @@ const steps: ControlledProgressStep[] = [
       </template> -->
 
       <header style="width: 100%">
-        <nav style="display: flex; justify-content: center">
+        <nav
+          style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 2em;
+          "
+        >
+          <OnyxHeadline is="h1">Exkursionsportal</OnyxHeadline>
+
           <OnyxProgressSteps v-model="activeStep" :steps="steps" />
         </nav>
       </header>
