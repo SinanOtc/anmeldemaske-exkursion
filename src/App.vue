@@ -23,6 +23,7 @@ const steps: ControlledProgressStep[] = [
   { label: 'Notfallkontakt' },
   { label: 'Checkliste' },
   { label: 'Zusammenfassung' },
+  { label: 'Download' },
 ]
 </script>
 
