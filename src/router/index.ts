@@ -50,13 +50,13 @@ export const router = createRouter({
     },
     {
       path: '/6',
-      name: 'Startseite',
-      component: StartseiteView,
+      name: 'Download',
+      component: DownloadView,
     },
     {
       path: '/7',
-      name: 'Download',
-      component: DownloadView,
+      name: 'Startseite',
+      component: StartseiteView,
     },
   ],
 })
