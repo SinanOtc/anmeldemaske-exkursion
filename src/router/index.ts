@@ -58,7 +58,6 @@ export const router = createRouter({
       name: 'Startseite',
       component: StartseiteView,
     },
-
   ],
 })
 

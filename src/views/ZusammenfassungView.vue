@@ -79,7 +79,7 @@ const router = useRouter()
   </div>
 
   <div class="mt-6 flex gap-3 justify-end">
-    <OnyxButton label="Weiter" type="submit" />
+    <OnyxButton label="Weiter" type="button" @click="router.push('/6')" />
     <OnyxButton label="Vorherige Seite" type="button" @click="router.push('/4')" />
   </div>
 </template>
