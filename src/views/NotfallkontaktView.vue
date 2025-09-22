@@ -30,14 +30,17 @@ onMounted(() => {
   inputNotfallkontaktTelefonnummer.value = store.notfall.telefon
 })
 
-const handleSubmit = () => {
-  // In Store speichern
+function persistEmergencyContact() {
   store.setNotfall({
     name: inputNotfallkontaktName.value,
     beziehung: inputNotfallkontaktBeziehung.value,
     telefon: inputNotfallkontaktTelefonnummer.value,
   })
+}
 
+const handleSubmit = () => {
+  // In Store speichern
+  persistEmergencyContact()
   toast.show({
     headline: 'Form submitted',
     description: inputValue.value,
@@ -45,6 +48,11 @@ const handleSubmit = () => {
   })
 
   router.push('/4')
+}
+
+function goBack() {
+  persistEmergencyContact()
+  router.push('/2')
 }
 </script>
 
@@ -61,8 +69,8 @@ const handleSubmit = () => {
     />
 
   <div class="VorZurueck">
-    <OnyxButton label="Vorherige Seite" type="button" @click="router.push('/2')" />
-    <OnyxButton label="Weiter" type="button" @click="router.push('/4')" />
+    <OnyxButton label="Vorherige Seite" type="button" @click="goBack" />
+    <OnyxButton label="Weiter" type="submit" />
   </div>
 
   </OnyxForm>

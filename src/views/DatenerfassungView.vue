@@ -91,8 +91,7 @@ onMounted(() => {
   else if (store.persoenlich.gruppe === 'Mit einem oder mehreren Partnern') company.value = 'nichtAlleine'
 })
 
-const handleSubmit = () => {
-  // In Store speichern (inkl. Mapping zurück)
+function persistPerson() {
   store.setPersoenlich({
     vorname: inputVorname.value,
     nachname: inputNachname.value,
@@ -114,7 +113,11 @@ const handleSubmit = () => {
         ? 'Mit einem oder mehreren Partnern'
         : undefined,
   })
+}
 
+const handleSubmit = () => {
+  // In Store speichern (inkl. Mapping zurück)
+  persistPerson()
   toast.show({
     headline: 'Form submitted',
     description: inputValue.value,
@@ -122,6 +125,11 @@ const handleSubmit = () => {
   })
 
   router.push('/3')
+}
+
+function goBack() {
+  persistPerson()
+  router.push('/1')
 }
 </script>
 
@@ -172,8 +180,8 @@ const handleSubmit = () => {
     />
 
   <div class="VorZurueck">
-    <OnyxButton label="Vorherige Seite" type="button" @click="router.push('/1')" />
-    <OnyxButton label="Weiter" type="button" @click="router.push('/3')" />
+    <OnyxButton label="Vorherige Seite" type="button" @click="goBack" />
+    <OnyxButton label="Weiter" type="submit" />
   </div>
 
   </OnyxForm>

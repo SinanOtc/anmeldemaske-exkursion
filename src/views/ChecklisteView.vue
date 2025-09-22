@@ -39,8 +39,7 @@ onMounted(() => {
   check7.value = store.checklist.check7
 })
 
-const handleSubmit = () => {
-  // In Store speichern
+function persistChecklist() {
   store.setChecklist({
     check1: check1.value,
     check2: check2.value,
@@ -50,7 +49,11 @@ const handleSubmit = () => {
     check6: check6.value,
     check7: check7.value,
   })
+}
 
+const handleSubmit = () => {
+  // In Store speichern
+  persistChecklist()
   toast.show({
     headline: 'Form submitted',
     description: inputValue.value,
@@ -58,6 +61,11 @@ const handleSubmit = () => {
   })
 
   router.push('/5')
+}
+
+function goBack() {
+  persistChecklist()
+  router.push('/3')
 }
 </script>
 
@@ -108,10 +116,10 @@ const handleSubmit = () => {
       value="example-value"
       required
     />
-  <div class="VorZurueck">
-    <OnyxButton label="Vorherige Seite" type="button" @click="router.push('/3')" />
-    <OnyxButton label="Weiter" type="button" @click="router.push('/5')" />
-  </div>
+    <div class="VorZurueck">
+      <OnyxButton label="Vorherige Seite" type="button" @click="goBack" />
+      <OnyxButton label="Weiter" type="submit" />
+    </div>
   </OnyxForm>
 </template>
 

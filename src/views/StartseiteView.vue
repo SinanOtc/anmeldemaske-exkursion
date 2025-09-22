@@ -1,53 +1,47 @@
 <script setup lang="ts">
-import {
-  OnyxHeadline,
-  OnyxForm,
-  OnyxButton,
-  useToast,
-  OnyxInput,
-  OnyxSelect,
-  type SelectOption,
-} from 'sit-onyx'
-
-import { ref } from 'vue'
+import { OnyxButton, OnyxHeadline } from 'sit-onyx'
 import { useRouter } from 'vue-router'
-
-const inputValue = ref<string>('')
-
-const inputNotfallkontaktName = ref<string>('')
-const inputNotfallkontaktBeziehung = ref<string>('')
-const inputNotfallkontaktTelefonnummer = ref<string>('')
+import { useAnmeldungStore } from '@/stores/anmeldungsStore'
 
 const router = useRouter()
-const toast = useToast()
+const store = useAnmeldungStore()
 
-const handleSubmit = () => {
-  // do something with your data here
-  toast.show({
-    headline: 'Form submitted',
-    description: inputValue.value,
-    color: 'success',
-  })
+function startRegistration() {
+  store.clearCompletion()
+  router.push('/1')
+}
 
-  router.push('/4')
+function resetDemo() {
+  store.resetStore()
+  router.replace('/1')
 }
 </script>
 
 <template>
-  <OnyxHeadline is="h2">Notfallkontakt</OnyxHeadline>
+  <div class="max-w-2xl mx-auto px-4 py-10">
+    <OnyxHeadline is="h1" class="mb-4">
+      Exkursions-Portal
+    </OnyxHeadline>
 
-  <OnyxForm class="form" @submit.prevent="handleSubmit">
-    <OnyxButton 
-      label="hi">
-    </OnyxButton>
-  </OnyxForm>
+    <p class="text-sm opacity-80 mb-6">
+      Beim ersten Besuch musst du dich einmalig anmelden. Danach wirst du automatisch ins Portal geleitet.
+      Deine Angaben kannst du später jederzeit bearbeiten.
+    </p>
+
+    <div class="mt-6 flex gap-3">
+      <OnyxButton label="Zur Anmeldung" type="button" @click="startRegistration" />
+      <OnyxButton label="Demo zurücksetzen" variant="ghost" type="button" @click="resetDemo" />
+    </div>
+
+    <div class="mt-10 text-xs opacity-70">
+      Hinweis: Nach erfolgreicher Anmeldung wird im Browser lokal ein Status gespeichert
+      (<code>anmeldung-store</code>), um dich künftig direkt ins Portal zu bringen.
+    </div>
+  </div>
 </template>
 
-<style>
-.form {
-  max-width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: var(--onyx-grid-gutter);
+<style scoped>
+.max-w-2xl {
+  max-width: 42rem;
 }
 </style>
