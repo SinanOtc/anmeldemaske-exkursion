@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-const STORAGE_KEY = 'anmeldung-store'
+export const STORAGE_KEY = 'anmeldung-store'
 
 interface Exkursion {
   titel: string
@@ -31,6 +31,7 @@ interface AnmeldungState {
   notfall: NotfallKontakt
   note: string
   checklist: ChecklistState
+  completed: boolean
 }
 
 interface ChecklistState {
@@ -76,6 +77,7 @@ export const useAnmeldungStore = defineStore('anmeldung', {
         check6: false,
         check7: false,
       },
+      completed: false,
     }
 
     if (savedState) {
@@ -123,6 +125,18 @@ export const useAnmeldungStore = defineStore('anmeldung', {
     saveToLocalStorage() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(this.$state))
     },
+    markRegistrationComplete() {
+      if (!this.completed && this.isComplete) {
+        this.completed = true
+        this.saveToLocalStorage()
+      }
+    },
+    clearCompletion() {
+      if (this.completed) {
+        this.completed = false
+        this.saveToLocalStorage()
+      }
+    },
   },
 
   getters: {
@@ -132,5 +146,6 @@ export const useAnmeldungStore = defineStore('anmeldung', {
       Boolean(state.persoenlich.vorname) &&
       Boolean(state.persoenlich.nachname) &&
       Boolean(state.notfall.name),
+    hasCompletedRegistration: (state) => state.completed,
   },
 })

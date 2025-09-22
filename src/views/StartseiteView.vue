@@ -37,17 +37,9 @@ const handleSubmit = () => {
   <OnyxHeadline is="h2">Notfallkontakt</OnyxHeadline>
 
   <OnyxForm class="form" @submit.prevent="handleSubmit">
-    <OnyxInput label="Name des Notfallkontakts" v-model="inputNotfallkontaktName" required />
-    <OnyxInput label="Beziehung zum Teilnehmer" v-model="inputNotfallkontaktBeziehung" required />
-    <OnyxInput
-      label="Telefonnummer des Notfallkontakts"
-      v-model="inputNotfallkontaktTelefonnummer"
-      required
-    />
-
-    <OnyxButton label="Weiter" type="submit" />
-    <OnyxButton label="Vorherige Seite" type="button" @click="router.push('/2')" />
-
+    <OnyxButton 
+      label="hi">
+    </OnyxButton>
   </OnyxForm>
 </template>
 

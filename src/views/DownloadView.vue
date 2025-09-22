@@ -1,9 +1,20 @@
 <script setup lang="ts">
 import { OnyxButton } from 'sit-onyx'
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAnmeldungStore } from '@/stores/anmeldungsStore'
 
 const store = useAnmeldungStore()
+const router = useRouter()
+
+onMounted(() => {
+  if (!store.isComplete) {
+    router.replace('/1')
+    return
+  }
+
+  store.markRegistrationComplete()
+})
 
 // 1) Flaches Objekt in gewünschter Reihenfolge
 const headers = [
