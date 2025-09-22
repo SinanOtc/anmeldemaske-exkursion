@@ -171,9 +171,11 @@ const handleSubmit = () => {
       required
     />
 
-    <OnyxButton label="Bestätigen" type="submit" />
-
+  <div class="VorZurueck">
     <OnyxButton label="Vorherige Seite" type="button" @click="router.push('/1')" />
+    <OnyxButton label="Weiter" type="button" @click="router.push('/3')" />
+  </div>
+
   </OnyxForm>
 </template>
 

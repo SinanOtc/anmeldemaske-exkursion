@@ -108,8 +108,10 @@ const handleSubmit = () => {
       value="example-value"
       required
     />
-    <OnyxButton label="Bestätigen" type="submit" />
+  <div class="VorZurueck">
     <OnyxButton label="Vorherige Seite" type="button" @click="router.push('/3')" />
+    <OnyxButton label="Weiter" type="button" @click="router.push('/5')" />
+  </div>
   </OnyxForm>
 </template>
 

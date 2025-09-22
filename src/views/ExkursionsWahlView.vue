@@ -36,8 +36,11 @@ const handleSubmit = () => {
 <template>
   <OnyxHeadline is="h2">Exkursions-ID eingeben</OnyxHeadline>
   <OnyxForm class="form" @submit.prevent="handleSubmit">
+    
     <OnyxInput v-model="inputValue" label="Enter your ID" placeholder="ID eingeben..." />
-    <OnyxButton label="Exkursions-ID bestätigen" type="submit" />
+
+    <OnyxButton label="Weiter" type="submit" />
+
   </OnyxForm>
 </template>
 

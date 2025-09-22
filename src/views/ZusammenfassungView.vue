@@ -78,13 +78,13 @@ const router = useRouter()
     </OnyxCard>
   </div>
 
-  <div class="mt-6 flex gap-3 justify-end">
-    <OnyxButton label="Weiter" type="button" @click="router.push('/6')" />
+  <div class="VorZurueck">
     <OnyxButton label="Vorherige Seite" type="button" @click="router.push('/4')" />
+    <OnyxButton label="Weiter" type="button" @click="router.push('/6')" />
   </div>
 </template>
 
-<style scoped>
+<style>
 /* schönes, kompaktes Key-Value-Layout */
 .kv {
   display: grid;
@@ -102,5 +102,11 @@ const router = useRouter()
 /* optional: Karten etwas luftiger */
 :deep(.onyx-card) {
   padding-bottom: 1rem;
+}
+
+.VorZurueck {
+  display: flex;
+  gap: 1rem; /* Abstand, z. B. 16px */
+  margin-top: 1rem;
 }
 </style>

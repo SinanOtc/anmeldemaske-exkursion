@@ -77,5 +77,18 @@ function downloadCsv() {
 </script>
 
 <template>
-  <OnyxButton label="CSV herunterladen" @click="downloadCsv" />
+
+  <div class="center-container">
+    <OnyxButton label="CSV herunterladen" @click="downloadCsv" />
+  </div>
+
 </template>
+
+<style>
+  .center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 75vh;
+  }
+</style>
