@@ -50,14 +50,15 @@ export const router = createRouter({
     },
     {
       path: '/6',
-      name: 'Startseite',
-      component: StartseiteView,
-    },
-    {
-      path: '/7',
       name: 'Download',
       component: DownloadView,
     },
+    {
+      path: '/7',
+      name: 'Startseite',
+      component: StartseiteView,
+    },
+
   ],
 })
 
