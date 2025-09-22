@@ -70,7 +70,7 @@ const router = useRouter()
 
       <OnyxTextarea
         :modelValue="note"
-        label="pups"
+        label="Anmerkungen"
         @update:modelValue="store.setNote"
         placeholder="Hier können Sie besondere Wünsche oder Hinweise eintragen"
         :rows="4"

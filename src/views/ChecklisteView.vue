@@ -10,8 +10,9 @@ import {
   OnyxRadioGroup,
   type SelectOption,
 } from 'sit-onyx'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAnmeldungStore } from '@/stores/anmeldungsStore'
 
 const inputValue = ref<string>('')
 
@@ -25,9 +26,31 @@ const check7 = ref(false)
 
 const router = useRouter()
 const toast = useToast()
+const store = useAnmeldungStore()
+
+onMounted(() => {
+  // Vorbelegen aus Store (inkl. localStorage-Restore)
+  check1.value = store.checklist.check1
+  check2.value = store.checklist.check2
+  check3.value = store.checklist.check3
+  check4.value = store.checklist.check4
+  check5.value = store.checklist.check5
+  check6.value = store.checklist.check6
+  check7.value = store.checklist.check7
+})
 
 const handleSubmit = () => {
-  // do something with your data here
+  // In Store speichern
+  store.setChecklist({
+    check1: check1.value,
+    check2: check2.value,
+    check3: check3.value,
+    check4: check4.value,
+    check5: check5.value,
+    check6: check6.value,
+    check7: check7.value,
+  })
+
   toast.show({
     headline: 'Form submitted',
     description: inputValue.value,

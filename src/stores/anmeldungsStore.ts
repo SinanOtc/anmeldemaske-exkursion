@@ -15,6 +15,8 @@ interface Persoenlich {
   ausweisart: 'Reisepass' | 'Personalausweis'
   ausweisnr: string
   handy: string
+  reiseart?: 'Auto' | 'Bus' | 'Flugzeug'
+  gruppe?: 'Alleine' | 'Mit einem oder mehreren Partnern'
 }
 
 interface NotfallKontakt {
@@ -28,18 +30,24 @@ interface AnmeldungState {
   persoenlich: Persoenlich
   notfall: NotfallKontakt
   note: string
+  checklist: ChecklistState
+}
+
+interface ChecklistState {
+  check1: boolean
+  check2: boolean
+  check3: boolean
+  check4: boolean
+  check5: boolean
+  check6: boolean
+  check7: boolean
 }
 
 export const useAnmeldungStore = defineStore('anmeldung', {
   state: (): AnmeldungState => {
     // Try to load state from localStorage
     const savedState = localStorage.getItem(STORAGE_KEY)
-    if (savedState) {
-      return JSON.parse(savedState)
-    }
-
-    // Return default state if nothing in localStorage
-    return {
+    const defaults: AnmeldungState = {
       exkursion: {
         titel: '',
         datum: '',
@@ -59,7 +67,32 @@ export const useAnmeldungStore = defineStore('anmeldung', {
         telefon: '',
       },
       note: '',
+      checklist: {
+        check1: false,
+        check2: false,
+        check3: false,
+        check4: false,
+        check5: false,
+        check6: false,
+        check7: false,
+      },
     }
+
+    if (savedState) {
+      const parsed = JSON.parse(savedState)
+      // Merge deep to keep backward compatibility when new fields are added
+      return {
+        ...defaults,
+        ...parsed,
+        exkursion: { ...defaults.exkursion, ...(parsed.exkursion || {}) },
+        persoenlich: { ...defaults.persoenlich, ...(parsed.persoenlich || {}) },
+        notfall: { ...defaults.notfall, ...(parsed.notfall || {}) },
+        checklist: { ...defaults.checklist, ...(parsed.checklist || {}) },
+      }
+    }
+
+    // Return default state if nothing in localStorage
+    return defaults
   },
 
   actions: {
@@ -67,8 +100,8 @@ export const useAnmeldungStore = defineStore('anmeldung', {
       this.exkursion = exkursion
       this.saveToLocalStorage()
     },
-    setPersoenlich(persoenlich: Persoenlich) {
-      this.persoenlich = persoenlich
+    setPersoenlich(persoenlich: Partial<Persoenlich>) {
+      this.persoenlich = { ...this.persoenlich, ...persoenlich }
       this.saveToLocalStorage()
     },
     setNotfall(notfall: NotfallKontakt) {
@@ -77,6 +110,10 @@ export const useAnmeldungStore = defineStore('anmeldung', {
     },
     setNote(note: string) {
       this.note = note
+      this.saveToLocalStorage()
+    },
+    setChecklist(checklist: ChecklistState) {
+      this.checklist = checklist
       this.saveToLocalStorage()
     },
     resetStore() {
