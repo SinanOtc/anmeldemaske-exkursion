@@ -35,7 +35,7 @@ const travelOpen = ref(false)
 const company = ref<string | null>(null)
 const companyOpen = ref(false)
 
-const options1: SelectOption[] = [
+const options1: SelectOption<string>[] = [
   {
     value: 'auto',
     label: 'Auto',
@@ -50,7 +50,7 @@ const options1: SelectOption[] = [
   },
 ]
 
-const options2: SelectOption[] = [
+const options2: SelectOption<string>[] = [
   {
     value: 'alleine',
     label: 'Alleine',
@@ -61,7 +61,7 @@ const options2: SelectOption[] = [
   },
 ]
 
-const options3: SelectOption[] = [
+const options3: SelectOption<string>[] = [
   {
     label: 'Personalausweis',
     value: 'personalausweis',

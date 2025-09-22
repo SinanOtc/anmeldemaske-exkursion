@@ -52,6 +52,7 @@ const handleSubmit = () => {
     <OnyxCheckbox
       label="Ich habe mich auf der Seite des Auswertigen Amts über das Reiseziel und Einreisebestimmungen informiert."
       v-model="check2"
+      value="example-value"
       required
     />
     <OnyxCheckbox
