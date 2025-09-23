@@ -82,6 +82,7 @@ const router = useRouter()
     <OnyxButton label="Vorherige Seite" type="button" @click="router.push('/4')" />
     <OnyxButton label="Weiter" type="button" @click="router.push('/6')" />
   </div>
+  
 </template>
 
 <style>

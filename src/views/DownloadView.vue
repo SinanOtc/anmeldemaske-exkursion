@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { OnyxButton } from 'sit-onyx'
-import { computed } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAnmeldungStore } from '@/stores/anmeldungsStore'
 
 const store = useAnmeldungStore()
+const router = useRouter()
 
 // 1) Flaches Objekt in gewünschter Reihenfolge
 const headers = [
@@ -80,6 +82,11 @@ function downloadCsv() {
 
   <div class="center-container">
     <OnyxButton label="CSV herunterladen" @click="downloadCsv" />
+  </div>
+
+  <div class="VorZurueck">
+    <OnyxButton label="Vorherige Seite" type="button" @click="router.push('/4')" />
+    <OnyxButton label="Weiter" type="button" @click="router.push('/6')" />
   </div>
 
 </template>
