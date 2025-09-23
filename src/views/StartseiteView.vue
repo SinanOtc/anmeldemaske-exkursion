@@ -7,7 +7,6 @@ const router = useRouter()
 const store = useAnmeldungStore()
 
 function startRegistration() {
-  store.clearCompletion()
   router.push('/1')
 }
 

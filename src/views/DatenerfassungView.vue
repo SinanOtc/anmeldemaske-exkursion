@@ -48,6 +48,14 @@ const options1: SelectOption<string>[] = [
     value: 'flugzeug',
     label: 'Flugzeug',
   },
+  {
+    value: 'zug',
+    label: 'Zug',
+  },
+  {
+    value: 'keineAhnung',
+    label: 'Noch nicht festgelegt/Sonstige',
+  },
 ]
 
 const options2: SelectOption<string>[] = [
@@ -58,6 +66,10 @@ const options2: SelectOption<string>[] = [
   {
     value: 'nichtAlleine',
     label: 'Mit einem oder mehreren Partnern',
+  },
+  {
+    value: '-',
+    label: '-',
   },
 ]
 
@@ -158,7 +170,6 @@ function goBack() {
       v-model:open="travelOpen"
       :options="options1"
       placeholder="Anreisen mit dem..."
-      required
     />
 
     <OnyxInput
@@ -166,7 +177,6 @@ function goBack() {
       v-model="inputFlugzeug"
       label="Flugnummer"
       placeholder="Flugnummer eingeben..."
-      required
     />
 
     <OnyxSelect
@@ -176,7 +186,6 @@ function goBack() {
       v-model:open="companyOpen"
       :options="options2"
       placeholder="Bin ich alleine?"
-      required
     />
 
   <div class="VorZurueck">

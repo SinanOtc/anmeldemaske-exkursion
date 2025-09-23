@@ -39,6 +39,7 @@ onMounted(() => {
   check7.value = store.checklist.check7
 })
 
+
 function persistChecklist() {
   store.setChecklist({
     check1: check1.value,
