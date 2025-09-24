@@ -12,6 +12,11 @@ import {
 
 const route = useRoute()
 
+const showStepper = computed<boolean>(() => {
+  // false auf Index-Pfad ('/'), sonst true
+  return route.path !== '/7'
+})
+
 const activeStep = computed(() => {
   const pathNum = Number(route.path.replace('/', ''))
   return pathNum
@@ -53,7 +58,7 @@ const steps: ControlledProgressStep[] = [
         >
           <OnyxHeadline is="h1">Exkursionsportal</OnyxHeadline>
 
-          <OnyxProgressSteps v-model="activeStep" :steps="steps" />
+          <OnyxProgressSteps v-if="showStepper" v-model="activeStep" :steps="steps" />
         </nav>
       </header>
 

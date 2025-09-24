@@ -10,5 +10,26 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  
 }
+
+ :root {
+    --onyx-color-base-primary-100: light-dark(#fde6ea, #3b070f);
+    --onyx-color-base-primary-200: light-dark(#f8c9d0, #531016);
+    --onyx-color-base-primary-300: light-dark(#f2aab5, #6b1a1d);
+    --onyx-color-base-primary-400: light-dark(#eb8b99, #832324);
+    --onyx-color-base-primary-500: light-dark(#c8102e, #9c2d35);
+    --onyx-color-base-primary-600: light-dark(#a50d26, #b5403d);
+    --onyx-color-base-primary-700: light-dark(#7f0a1d, #cf5345);
+    --onyx-color-base-primary-800: light-dark(#5a0714, #e7674d);
+    --onyx-color-base-primary-900: light-dark(#35050c, #f78663);
+
+    --onyx-color-base-neutral-100: light-dark(#f5f5f6, #1e1e1e);
+    --onyx-color-base-neutral-200: light-dark(#e9eaec, #2a2a2a);
+    --onyx-color-base-neutral-300: light-dark(#dde0e3, #363636);
+    --onyx-color-base-neutral-400: light-dark(#cfd3d8, #424242);
+    --onyx-color-base-neutral-500: light-dark(#b1b6bd, #545454);
+    --onyx-color-base-neutral-600: light-dark(#868c94, #6f6f6f);
+    --onyx-color-base-neutral-700: light-dark(#5e646d, #8a8a8a);
+    --onyx-color-base-neutral-800: light-dark(#3a4049, #a6a6a6);
+    --onyx-color-base-neutral-900: light-dark(#1f252e, #c2c2c2);
+  }

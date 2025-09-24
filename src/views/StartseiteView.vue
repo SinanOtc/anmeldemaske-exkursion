@@ -29,9 +29,9 @@ const router = useRouter()
             </template>
 
             <div class="sidebar-links">
-              <OnyxButton label="Übersicht" mode="plain" color="neutral" />
-              <OnyxButton label="Erfahrungsberichte" mode="plain" color="neutral" />
-              <OnyxButton label="Galerie" mode="plain" color="neutral" />
+              <OnyxButton label="Übersicht" mode="plain" />
+              <OnyxButton label="Erfahrungsberichte" mode="plain" />
+              <OnyxButton label="Galerie" mode="plain" />
             </div>
           </OnyxAccordionItem>
 
@@ -41,9 +41,8 @@ const router = useRouter()
             </template>
 
             <div class="sidebar-links">
-              <OnyxButton label="Daten ansehen" mode="plain" color="neutral"  />
-              <OnyxButton label="Daten bearbeiten" mode="plain" color="neutral" @click="router.push('/1')" />
-              <OnyxButton label="PDF herunterladen" mode="plain" color="neutral" />
+              <OnyxButton label="Daten bearbeiten" mode="plain" @click="router.push('/1')" />
+              <OnyxButton label="PDF herunterladen" mode="plain" />
             </div>
           </OnyxAccordionItem>
 
@@ -53,8 +52,8 @@ const router = useRouter()
             </template>
 
             <div class="sidebar-links">
-              <OnyxButton label="Hilfe" mode="plain" color="neutral" />
-              <OnyxButton label="Profil" mode="plain" color="neutral" />
+              <OnyxButton label="Hilfe" mode="plain"  />
+              <OnyxButton label="Profil" mode="plain" />
             </div>
           </OnyxAccordionItem>
         </OnyxAccordion>
@@ -62,12 +61,13 @@ const router = useRouter()
     </div>
 
     <div class="portal-content">
-      <header class="portal-header">
-        <div class="portal-header__actions">
-          <OnyxIconButton :icon="iconCircleHelp" label="Hilfe" color="neutral" />
-          <OnyxIconButton :icon="iconUser" label="Profil" color="neutral" />
-        </div>
-      </header>
+     <header class="portal-header">
+  <div class="portal-header__actions">
+    <OnyxIconButton :icon="iconCircleHelp" label="Hilfe" />
+    <OnyxIconButton :icon="iconUser" label="Profil" />
+  </div>
+</header>
+
     </div>
   </div>
 </template>
@@ -104,16 +104,15 @@ const router = useRouter()
 
 .portal-content {
   display: flex;
+  float: right;
   flex-direction: column;
   gap: var(--onyx-grid-gutter, 1.5rem);
 }
 
 .portal-header {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: var(--onyx-grid-gutter, 1.5rem);
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: 1fr auto; /* Titel links/zentriert, Icons rechts */
+  align-items: center;
 }
 
 .portal-header__intro {
@@ -121,10 +120,6 @@ const router = useRouter()
   flex-direction: column;
   gap: var(--onyx-grid-gutter, 1rem);
   flex: 1 1 340px;
-}
-
-.portal-title {
-  margin: 0;
 }
 
 .portal-info-card {
@@ -158,6 +153,7 @@ const router = useRouter()
 
 .portal-header__actions {
   display: flex;
+  justify-content: flex-end;
   gap: 0.5rem;
   align-items: center;
 }

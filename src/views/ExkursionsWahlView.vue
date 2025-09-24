@@ -11,6 +11,15 @@ const toast = useToast()
 const store = useAnmeldungStore()
 
 onMounted(() => {
+  if(localStorage.getItem('anmeldung-store') != undefined && localStorage.getItem('anmeldung-store')!.length>1){
+    // Bereits vorhandene Daten erkannt: falls eine Exkursions-ID existiert, direkt fortfahren
+    if (store.exkursion.id && store.exkursion.id.length > 0) {
+      inputValue.value = store.exkursion.id
+      router.push('/2')
+      return
+    }
+  }
+  
   // Vorbelegen der ID aus Store (falls vorhanden)
   inputValue.value = store.exkursion.id
 })

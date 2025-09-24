@@ -85,8 +85,8 @@ function downloadCsv() {
   </div>
 
   <div class="VorZurueck">
-    <OnyxButton label="Vorherige Seite" type="button" @click="router.push('/4')" />
-    <OnyxButton label="Weiter" type="button" @click="router.push('/6')" />
+    <OnyxButton label="Vorherige Seite" type="button" @click="router.push('/5')" />
+    <OnyxButton label="Zum Exkursionsportal" type="button" @click="router.push('/7')" />
   </div>
 
 </template>

@@ -20,7 +20,7 @@ const router = useRouter()
       <dl class="kv">
         <dt>Exkursionstitel</dt>
         <dd>{{ exkursion.titel || '—' }}</dd>
-        <dt>Exkursionsdatum</dt>
+        <dt>Exkursionszeitraum</dt>
         <dd>{{ exkursion.datum || '—' }}</dd>
         <dt>Zielort</dt>
         <dd>{{ exkursion.ort || '—' }}</dd>
@@ -54,11 +54,11 @@ const router = useRouter()
     <OnyxCard>
       <template #title>Notfallkontakt</template>
       <dl class="kv">
-        <dt>Name</dt>
+        <dt>Name des Notfallkontakts</dt>
         <dd>{{ notfall.name || '—' }}</dd>
-        <dt>Beziehung</dt>
+        <dt>Beziehung zum Notfallkontakt</dt>
         <dd>{{ notfall.beziehung || '—' }}</dd>
-        <dt>Telefon</dt>
+        <dt>Nummer des Notfallkontakts</dt>
         <dd>{{ notfall.telefon || '—' }}</dd>
       </dl>
       <OnyxButton label="Bearbeiten" variant="ghost" class="mt-3" @click="router.push('/3')"

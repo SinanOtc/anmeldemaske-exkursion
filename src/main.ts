@@ -1,5 +1,3 @@
-import './assets/main.css'
-
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { createOnyx } from 'sit-onyx'
@@ -9,6 +7,8 @@ import router from './router'
 
 // Neuer Absatz weils eine CSS ist
 import 'sit-onyx/style.css'
+
+import './assets/main.css'
 
 // Schriftarten
 import "@fontsource-variable/source-code-pro";
