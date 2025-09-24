@@ -49,7 +49,7 @@ const handleSubmit = () => {
     <OnyxInput v-model="inputValue" label="Enter your ID" placeholder="ID eingeben..." />
 
   <div class="VorZurueck">
-    <OnyxButton label="Ich bin bereits Angemeldet" type="button" @click="router.push('/7')" />
+    <OnyxButton label="Ich bin bereits Angemeldet" type="button" @click="router.push('/')" />
     <OnyxButton label="Weiter" type="submit" />
   </div>
 

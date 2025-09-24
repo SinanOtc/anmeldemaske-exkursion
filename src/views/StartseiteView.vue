@@ -27,9 +27,9 @@ const router = useRouter()
 
   <div class="NavbarOben">
     <OnyxNavBar appName="Exkursionsportal der DHBW" logoUrl="/kevin.JPG">
-      <OnyxNavItem label="Router Link" link="#router-link" />
-      <OnyxNavItem label="Daten bearbeiten" @click="router.push('/')">
+      <OnyxNavItem label="Daten bearbeiten" @click="router.push('/1')">
       </OnyxNavItem>
+      <OnyxNavItem label="Erfahrungsberichte" type="button" />
     </OnyxNavBar>
     
   </div>

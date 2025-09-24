@@ -5,7 +5,6 @@ import ExkursionsWahlView from '@/views/ExkursionsWahlView.vue'
 import DatenerfassungView from '@/views/DatenerfassungView.vue'
 import ChecklisteView from '@/views/ChecklisteView.vue'
 import NotfallkontaktView from '@/views/NotfallkontaktView.vue'
-import InfosView from '@/views/ZusammenfassungView.vue'
 import ZusammenfassungView from '@/views/ZusammenfassungView.vue'
 import StartseiteView from '@/views/StartseiteView.vue'
 import DownloadView from '@/views/DownloadView.vue'
@@ -15,8 +14,8 @@ export const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'Exkusrionswahl',
-      component: ExkursionsWahlView,
+      name: 'Startseite',
+      component: StartseiteView,
     },
     {
       path: '/about',
@@ -52,11 +51,6 @@ export const router = createRouter({
       path: '/6',
       name: 'Download',
       component: DownloadView,
-    },
-    {
-      path: '/7',
-      name: 'Startseite',
-      component: StartseiteView,
     },
   ],
 })

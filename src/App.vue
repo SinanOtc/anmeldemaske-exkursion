@@ -14,7 +14,7 @@ const route = useRoute()
 
 const showStepper = computed<boolean>(() => {
   // false auf Index-Pfad ('/'), sonst true
-  return route.path !== '/7'
+  return route.path !== '/' && route.path !== ('/about')
 })
 
 const activeStep = computed(() => {
