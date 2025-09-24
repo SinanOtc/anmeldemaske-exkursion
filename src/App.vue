@@ -56,8 +56,6 @@ const steps: ControlledProgressStep[] = [
             gap: 2em;
           "
         >
-          <OnyxHeadline is="h1">Exkursionsportal</OnyxHeadline>
-
           <OnyxProgressSteps v-if="showStepper" v-model="activeStep" :steps="steps" />
         </nav>
       </header>

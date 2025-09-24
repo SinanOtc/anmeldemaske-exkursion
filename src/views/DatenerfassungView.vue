@@ -16,9 +16,9 @@ import { useAnmeldungStore } from '@/stores/anmeldungsStore'
 const inputValue = ref<string>('')
 
 const inputFlugzeug = ref<string>('')
+const inputFlugnummer = ref<string>('')
 
 const inputMatrikelNr = ref<string>('')
-
 const inputEmail = ref<string>('')
 
 const inputNummer = ref<string>('')
