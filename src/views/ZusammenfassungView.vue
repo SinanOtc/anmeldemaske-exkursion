@@ -18,13 +18,13 @@ const router = useRouter()
     <OnyxCard>
       <template #title>Exkursionsdaten</template>
       <dl class="kv">
-        <dt>Titel</dt>
+        <dt>Exkursionstitel</dt>
         <dd>{{ exkursion.titel || '—' }}</dd>
-        <dt>Datum</dt>
+        <dt>Exkursionsdatum</dt>
         <dd>{{ exkursion.datum || '—' }}</dd>
-        <dt>Ort</dt>
+        <dt>Zielort</dt>
         <dd>{{ exkursion.ort || '—' }}</dd>
-        <dt>ID</dt>
+        <dt>Exkursions-ID</dt>
         <dd>{{ exkursion.id || '—' }}</dd>
       </dl>
       <OnyxButton label="Bearbeiten" variant="ghost" class="mt-3" @click="router.push('/1')"

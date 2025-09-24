@@ -40,8 +40,8 @@ const handleSubmit = () => {
     <OnyxInput v-model="inputValue" label="Enter your ID" placeholder="ID eingeben..." />
 
   <div class="VorZurueck">
-    <OnyxButton label="Ich bin bereits für eine Exkursion angemeldet" type="button" @click="router.push('/7')" />
-    <OnyxButton label="Weiter" type="button" @click="router.push('/2')" />
+    <OnyxButton label="Ich bin bereits Angemeldet" type="button" @click="router.push('/7')" />
+    <OnyxButton label="Weiter" type="submit" />
   </div>
 
   </OnyxForm>

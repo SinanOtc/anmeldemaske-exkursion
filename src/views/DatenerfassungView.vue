@@ -17,6 +17,10 @@ const inputValue = ref<string>('')
 
 const inputFlugzeug = ref<string>('')
 
+const inputMatrikelNr = ref<string>('')
+
+const inputEmail = ref<string>('')
+
 const inputNummer = ref<string>('')
 
 const inputAusweis = ref<string>('')
@@ -89,6 +93,8 @@ onMounted(() => {
   inputVorname.value = store.persoenlich.vorname
   inputNachname.value = store.persoenlich.nachname
   inputAusweis.value = store.persoenlich.ausweisnr
+  inputMatrikelNr.value = store.persoenlich.matrikelnr
+  inputEmail.value = store.persoenlich.email
   inputNummer.value = store.persoenlich.handy
   // Mapping: Store ('Personalausweis' | 'Reisepass') -> UI values ('personalausweis' | 'reisepass')
   ausweisTyp.value = store.persoenlich.ausweisart === 'Reisepass' ? 'reisepass' : 'personalausweis'
@@ -97,10 +103,13 @@ onMounted(() => {
   if (store.persoenlich.reiseart === 'Auto') travel.value = 'auto'
   else if (store.persoenlich.reiseart === 'Bus') travel.value = 'bus'
   else if (store.persoenlich.reiseart === 'Flugzeug') travel.value = 'flugzeug'
+  else if (store.persoenlich.reiseart === 'Noch nicht festgelegt/Sonstige') travel.value = 'keineAhnung'
 
   // Mapping Gruppe -> UI values
   if (store.persoenlich.gruppe === 'Alleine') company.value = 'alleine'
   else if (store.persoenlich.gruppe === 'Mit einem oder mehreren Partnern') company.value = 'nichtAlleine'
+    else if (store.persoenlich.gruppe === '-') company.value = '-'
+
 })
 
 function persistPerson() {
@@ -108,6 +117,8 @@ function persistPerson() {
     vorname: inputVorname.value,
     nachname: inputNachname.value,
     ausweisart: ausweisTyp.value === 'reisepass' ? 'Reisepass' : 'Personalausweis',
+    matrikelnr: inputMatrikelNr.value,
+    email: inputEmail.value,
     ausweisnr: inputAusweis.value,
     handy: inputNummer.value,
     reiseart:
@@ -117,12 +128,16 @@ function persistPerson() {
         ? 'Bus'
         : travel.value === 'flugzeug'
         ? 'Flugzeug'
+        :travel.value === 'keineAhnung'
+        ? 'Noch nicht festgelegt/Sonstige'
         : undefined,
     gruppe:
       company.value === 'alleine'
         ? 'Alleine'
         : company.value === 'nichtAlleine'
         ? 'Mit einem oder mehreren Partnern'
+        : company.value === '-'
+        ? '-'
         : undefined,
   })
 }
@@ -162,6 +177,9 @@ function goBack() {
     </div>
 
     <OnyxInput label="Handynummer" v-model="inputNummer" required />
+    <OnyxInput label="Matrikelnummer" v-model="inputMatrikelNr" required />
+    <OnyxInput label="Email-Adresse" v-model="inputEmail" required />
+
 
     <OnyxSelect
       label="Wie reisen Sie an?"

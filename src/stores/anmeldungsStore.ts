@@ -15,8 +15,10 @@ interface Persoenlich {
   ausweisart: 'Reisepass' | 'Personalausweis'
   ausweisnr: string
   handy: string
-  reiseart?: 'Auto' | 'Bus' | 'Flugzeug'
-  gruppe?: 'Alleine' | 'Mit einem oder mehreren Partnern'
+  email: string
+  matrikelnr: string
+  reiseart?: 'Auto' | 'Bus' | 'Flugzeug' | 'Noch nicht festgelegt/Sonstige'
+  gruppe?: 'Alleine' | 'Mit einem oder mehreren Partnern' | '-'
 }
 
 interface NotfallKontakt {
@@ -60,6 +62,8 @@ export const useAnmeldungStore = defineStore('anmeldung', {
         ausweisart: 'Personalausweis',
         ausweisnr: '',
         handy: '',
+        email: '',
+        matrikelnr: '',
       },
       notfall: {
         name: '',
@@ -131,6 +135,8 @@ export const useAnmeldungStore = defineStore('anmeldung', {
       Boolean(state.exkursion.id) &&
       Boolean(state.persoenlich.vorname) &&
       Boolean(state.persoenlich.nachname) &&
+      Boolean(state.persoenlich.email) &&
+      Boolean(state.persoenlich.matrikelnr) &&
       Boolean(state.notfall.name),
   },
 })
