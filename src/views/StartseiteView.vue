@@ -102,7 +102,7 @@ const logout = () => {
   <div class="NavbarOben">
     <OnyxNavBar appName="Exkursionsportal der DHBW" logoUrl="/kevin.JPG">
       <OnyxNavItem label="Daten bearbeiten" @click="router.push('/1')"> </OnyxNavItem>
-      <OnyxNavItem v-if="isAdmin" label="Adminbereich" @click="router.push('/admin')"> </OnyxNavItem>
+      <OnyxNavItem v-if="isAdmin" label="Exkursion anlegen" @click="router.push('/admin')"> </OnyxNavItem>
       <OnyxNavItem label="Erfahrungsberichte" type="button" />
     </OnyxNavBar>
   </div>
