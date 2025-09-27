@@ -323,6 +323,8 @@ if (!adminStore.isAdmin) {
       </OnyxCard>
     </div>
   </section>
+  
+  <OnyxButton label="zur Startseite" @click="router.push('/1')"></OnyxButton>
 </template>
 
 <style scoped>
