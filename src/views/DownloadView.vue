@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { OnyxButton } from 'sit-onyx'
-import { ref, onMounted, computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { OnyxButton, OnyxCard, OnyxHeadline, useToast } from 'sit-onyx'
+
 import { useAnmeldungStore } from '@/stores/anmeldungsStore'
 
 const store = useAnmeldungStore()
 const router = useRouter()
+const toast = useToast()
 
-// 1) Flaches Objekt in gewünschter Reihenfolge
 const headers = [
   'exkursion_titel',
   'exkursion_datum',
@@ -43,28 +44,39 @@ const row = computed<Record<(typeof headers)[number], string>>(() => {
   }
 })
 
-// 2) CSV-Utils (Semikolon = Excel-freundlich im DACH-Raum)
+const isSubmitted = computed(() => store.isSubmitted)
+
+onMounted(() => {
+  if (!isSubmitted.value) {
+    try {
+      store.submitAnmeldung()
+    } catch (error) {
+      console.error('Anmeldung konnte nicht automatisch gespeichert werden.', error)
+      toast.show({
+        headline: 'Anmeldung unvollständig',
+        description: 'Bitte wählen Sie eine Exkursion aus und prüfen Sie Ihre Angaben.',
+        color: 'danger',
+      })
+    }
+  }
+})
+
 function escapeCsv(val: string, delimiter = ';') {
   const needsQuotes = val.includes(delimiter) || val.includes('"') || /\r?\n/.test(val)
   const escaped = val.replace(/"/g, '""')
   return needsQuotes ? `"${escaped}"` : escaped
 }
 
-function toCsv(data: Record<string, string>[], headers: readonly string[], delimiter = ';') {
+function toCsv(data: Record<string, string>[], delimiter = ';') {
   const headerLine = headers.join(delimiter)
-  const lines = data.map((r) =>
-    headers.map((h) => escapeCsv(r[h] ?? '', delimiter)).join(delimiter),
-  )
-  // BOM für Excel
+  const lines = data.map((r) => headers.map((h) => escapeCsv(r[h] ?? '', delimiter)).join(delimiter))
   return '\uFEFF' + [headerLine, ...lines].join('\r\n')
 }
 
-// 3) Download auslösen
 function downloadCsv() {
-  const csv = toCsv([row.value], headers, ';')
+  const csv = toCsv([row.value], ';')
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
   const url = URL.createObjectURL(blob)
-
   const ts = new Date().toISOString().replace(/[:T]/g, '-').slice(0, 19)
   const filename = `anmeldung_${ts}.csv`
 
@@ -79,6 +91,15 @@ function downloadCsv() {
 </script>
 
 <template>
+  <OnyxHeadline is="h2">Download</OnyxHeadline>
+
+  <OnyxCard class="status-card">
+    <template #title>Anmeldestatus</template>
+    <p v-if="isSubmitted">Ihre Anmeldung wurde gespeichert und kann jetzt exportiert werden.</p>
+    <p v-else>
+      Die Anmeldung ist noch unvollständig. Bitte gehen Sie zurück und prüfen Sie Ihre Eingaben.
+    </p>
+  </OnyxCard>
 
   <div class="center-container">
     <OnyxButton label="CSV herunterladen" @click="downloadCsv" />
@@ -88,14 +109,17 @@ function downloadCsv() {
     <OnyxButton label="Vorherige Seite" type="button" @click="router.push('/5')" />
     <OnyxButton label="Zum Exkursionsportal" type="button" @click="router.push('/')" />
   </div>
-
 </template>
 
-<style>
-  .center-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 75vh;
-  }
+<style scoped>
+.center-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 40vh;
+}
+
+.status-card {
+  margin-bottom: 2rem;
+}
 </style>

@@ -103,6 +103,7 @@ onMounted(() => {
   if (store.persoenlich.reiseart === 'Auto') travel.value = 'auto'
   else if (store.persoenlich.reiseart === 'Bus') travel.value = 'bus'
   else if (store.persoenlich.reiseart === 'Flugzeug') travel.value = 'flugzeug'
+  else if (store.persoenlich.reiseart === 'Zug') travel.value = 'zug'
   else if (store.persoenlich.reiseart === 'Noch nicht festgelegt/Sonstige') travel.value = 'keineAhnung'
 
   // Mapping Gruppe -> UI values
@@ -128,7 +129,9 @@ function persistPerson() {
         ? 'Bus'
         : travel.value === 'flugzeug'
         ? 'Flugzeug'
-        :travel.value === 'keineAhnung'
+        : travel.value === 'zug'
+        ? 'Zug'
+        : travel.value === 'keineAhnung'
         ? 'Noch nicht festgelegt/Sonstige'
         : undefined,
     gruppe:

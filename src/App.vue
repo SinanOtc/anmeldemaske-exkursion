@@ -13,13 +13,16 @@ import {
 const route = useRoute()
 
 const showStepper = computed<boolean>(() => {
-  // false auf Index-Pfad ('/'), sonst true
-  return route.path !== '/' && route.path !== ('/about')
+  if (route.path === '/' || route.path === '/about' || route.path.startsWith('/admin')) {
+    return false
+  }
+  const pathNum = Number(route.path.replace('/', ''))
+  return Number.isFinite(pathNum) && pathNum > 0
 })
 
 const activeStep = computed(() => {
   const pathNum = Number(route.path.replace('/', ''))
-  return pathNum
+  return Number.isFinite(pathNum) ? pathNum : 0
 })
 
 const steps: ControlledProgressStep[] = [

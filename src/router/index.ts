@@ -7,6 +7,8 @@ import NotfallkontaktView from '@/views/NotfallkontaktView.vue'
 import ZusammenfassungView from '@/views/ZusammenfassungView.vue'
 import StartseiteView from '@/views/StartseiteView.vue'
 import DownloadView from '@/views/DownloadView.vue'
+import AdminView from '@/views/AdminView.vue'
+import { useAdminStore } from '@/stores/adminStore'
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,6 +17,12 @@ export const router = createRouter({
       path: '/',
       name: 'Startseite',
       component: StartseiteView,
+    },
+    {
+      path: '/admin',
+      name: 'AdminPanel',
+      component: AdminView,
+      meta: { requiresAdmin: true },
     },
     {
       path: '/about',
@@ -52,6 +60,21 @@ export const router = createRouter({
       component: DownloadView,
     },
   ],
+})
+
+router.beforeEach((to) => {
+  if (!to.meta.requiresAdmin) {
+    return true
+  }
+
+  const adminStore = useAdminStore()
+  adminStore.ensureHydrated()
+
+  if (!adminStore.isAdmin) {
+    return { name: 'Startseite', query: { redirect: to.fullPath } }
+  }
+
+  return true
 })
 
 export default router

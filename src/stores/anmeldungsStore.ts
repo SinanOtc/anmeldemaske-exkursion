@@ -1,33 +1,67 @@
 import { defineStore } from 'pinia'
 
+import type {
+  ChecklistState,
+  Exkursion,
+  NotfallKontakt,
+  Persoenlich,
+} from '@/types/anmeldung'
+import { useAdminStore } from './adminStore'
+
 const STORAGE_KEY = 'anmeldung-store'
 
-interface Exkursion {
-  titel: string
-  datum: string
-  ort: string
-  id: string
+function createAnmeldungId() {
+  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
+    return crypto.randomUUID()
+  }
+
+  return `anmeldung-${Math.random().toString(36).slice(2, 10)}-${Date.now()}`
 }
 
-interface Persoenlich {
-  vorname: string
-  nachname: string
-  ausweisart: 'Reisepass' | 'Personalausweis'
-  ausweisnr: string
-  handy: string
-  email: string
-  matrikelnr: string
-  reiseart?: 'Auto' | 'Bus' | 'Flugzeug' | 'Noch nicht festgelegt/Sonstige'
-  gruppe?: 'Alleine' | 'Mit einem oder mehreren Partnern' | '-'
+function createDefaultChecklist(): ChecklistState {
+  return {
+    check1: false,
+    check2: false,
+    check3: false,
+    check4: false,
+    check5: false,
+    check6: false,
+    check7: false,
+  }
 }
 
-interface NotfallKontakt {
-  name: string
-  beziehung: string
-  telefon: string
+function createDefaultState(): AnmeldungState {
+  return {
+    anmeldungId: createAnmeldungId(),
+    submittedAt: null,
+    exkursion: {
+      titel: '',
+      datum: '',
+      ort: '',
+      id: '',
+    },
+    persoenlich: {
+      vorname: '',
+      nachname: '',
+      ausweisart: 'Personalausweis',
+      ausweisnr: '',
+      handy: '',
+      email: '',
+      matrikelnr: '',
+    },
+    notfall: {
+      name: '',
+      beziehung: '',
+      telefon: '',
+    },
+    note: '',
+    checklist: createDefaultChecklist(),
+  }
 }
 
-interface AnmeldungState {
+export interface AnmeldungState {
+  anmeldungId: string
+  submittedAt: string | null
   exkursion: Exkursion
   persoenlich: Persoenlich
   notfall: NotfallKontakt
@@ -35,102 +69,107 @@ interface AnmeldungState {
   checklist: ChecklistState
 }
 
-interface ChecklistState {
-  check1: boolean
-  check2: boolean
-  check3: boolean
-  check4: boolean
-  check5: boolean
-  check6: boolean
-  check7: boolean
-}
-
 export const useAnmeldungStore = defineStore('anmeldung', {
   state: (): AnmeldungState => {
-    // Try to load state from localStorage
-    const savedState = localStorage.getItem(STORAGE_KEY)
-    const defaults: AnmeldungState = {
-      exkursion: {
-        titel: '',
-        datum: '',
-        ort: '',
-        id: '',
-      },
-      persoenlich: {
-        vorname: '',
-        nachname: '',
-        ausweisart: 'Personalausweis',
-        ausweisnr: '',
-        handy: '',
-        email: '',
-        matrikelnr: '',
-      },
-      notfall: {
-        name: '',
-        beziehung: '',
-        telefon: '',
-      },
-      note: '',
-      checklist: {
-        check1: false,
-        check2: false,
-        check3: false,
-        check4: false,
-        check5: false,
-        check6: false,
-        check7: false,
-      },
+    const defaults = createDefaultState()
+
+    if (typeof localStorage === 'undefined') {
+      return defaults
     }
 
-    if (savedState) {
-      const parsed = JSON.parse(savedState)
-      // Merge deep to keep backward compatibility when new fields are added
+    const savedState = localStorage.getItem(STORAGE_KEY)
+    if (!savedState) {
+      return defaults
+    }
+
+    try {
+      const parsed = JSON.parse(savedState) as Partial<AnmeldungState>
       return {
         ...defaults,
         ...parsed,
-        exkursion: { ...defaults.exkursion, ...(parsed.exkursion || {}) },
-        persoenlich: { ...defaults.persoenlich, ...(parsed.persoenlich || {}) },
-        notfall: { ...defaults.notfall, ...(parsed.notfall || {}) },
-        checklist: { ...defaults.checklist, ...(parsed.checklist || {}) },
+        anmeldungId: parsed?.anmeldungId || defaults.anmeldungId,
+        submittedAt: parsed?.submittedAt ?? null,
+        exkursion: { ...defaults.exkursion, ...(parsed?.exkursion || {}) },
+        persoenlich: { ...defaults.persoenlich, ...(parsed?.persoenlich || {}) },
+        notfall: { ...defaults.notfall, ...(parsed?.notfall || {}) },
+        checklist: { ...defaults.checklist, ...(parsed?.checklist || {}) },
       }
+    } catch (error) {
+      console.warn('AnmeldungStore konnte nicht aus dem Storage geladen werden.', error)
+      return defaults
     }
-
-    // Return default state if nothing in localStorage
-    return defaults
   },
 
   actions: {
-    setExkursion(exkursion: Exkursion) {
-      this.exkursion = exkursion
-      this.saveToLocalStorage()
+    setExkursion(exkursion: Partial<Exkursion>) {
+      this.exkursion = { ...this.exkursion, ...exkursion }
+      this.touchDraft()
     },
     setPersoenlich(persoenlich: Partial<Persoenlich>) {
       this.persoenlich = { ...this.persoenlich, ...persoenlich }
-      this.saveToLocalStorage()
+      this.touchDraft()
     },
-    setNotfall(notfall: NotfallKontakt) {
-      this.notfall = notfall
-      this.saveToLocalStorage()
+    setNotfall(notfall: Partial<NotfallKontakt>) {
+      this.notfall = { ...this.notfall, ...notfall }
+      this.touchDraft()
     },
     setNote(note: string) {
       this.note = note
-      this.saveToLocalStorage()
+      this.touchDraft()
     },
-    setChecklist(checklist: ChecklistState) {
-      this.checklist = checklist
-      this.saveToLocalStorage()
+    setChecklist(checklist: Partial<ChecklistState>) {
+      this.checklist = { ...this.checklist, ...checklist }
+      this.touchDraft()
     },
     resetStore() {
-      this.$reset()
-      localStorage.removeItem(STORAGE_KEY)
+      const defaults = createDefaultState()
+      this.$patch(defaults)
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem(STORAGE_KEY)
+      }
+    },
+    touchDraft() {
+      this.submittedAt = null
+      this.saveToLocalStorage()
+    },
+    ensureAnmeldungId() {
+      if (!this.anmeldungId) {
+        this.anmeldungId = createAnmeldungId()
+      }
+    },
+    submitAnmeldung() {
+      this.ensureAnmeldungId()
+
+      if (!this.exkursion.id) {
+        throw new Error('Es wurde keine Exkursions-ID hinterlegt.')
+      }
+
+      const adminStore = useAdminStore()
+      adminStore.recordSubmission({
+        id: this.anmeldungId,
+        exkursionId: this.exkursion.id,
+        persoenlich: { ...this.persoenlich },
+        notfall: { ...this.notfall },
+        note: this.note,
+        checklist: { ...this.checklist },
+        exkursionSnapshot: { ...this.exkursion },
+      })
+
+      this.submittedAt = new Date().toISOString()
+      this.saveToLocalStorage()
     },
     saveToLocalStorage() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.$state))
+      if (typeof localStorage === 'undefined') {
+        return
+      }
+
+      const snapshot = JSON.parse(JSON.stringify(this.$state)) as AnmeldungState
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot))
     },
   },
 
   getters: {
-    fullName: (state) => `${state.persoenlich.vorname} ${state.persoenlich.nachname}`,
+    fullName: (state) => `${state.persoenlich.vorname} ${state.persoenlich.nachname}`.trim(),
     isComplete: (state) =>
       Boolean(state.exkursion.id) &&
       Boolean(state.persoenlich.vorname) &&
@@ -138,5 +177,6 @@ export const useAnmeldungStore = defineStore('anmeldung', {
       Boolean(state.persoenlich.email) &&
       Boolean(state.persoenlich.matrikelnr) &&
       Boolean(state.notfall.name),
+    isSubmitted: (state) => Boolean(state.submittedAt),
   },
 })

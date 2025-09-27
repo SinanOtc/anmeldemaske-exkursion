@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { OnyxHeadline, OnyxCard, OnyxButton, OnyxTextarea } from 'sit-onyx'
+import { OnyxHeadline, OnyxCard, OnyxButton, OnyxTextarea, useToast } from 'sit-onyx'
 import { useRouter } from 'vue-router'
 
 import { useAnmeldungStore } from '@/stores/anmeldungsStore'
@@ -9,6 +9,21 @@ const store = useAnmeldungStore()
 const { exkursion, persoenlich, notfall, note } = storeToRefs(store)
 
 const router = useRouter()
+const toast = useToast()
+
+const goToDownload = () => {
+  try {
+    store.submitAnmeldung()
+    router.push('/6')
+  } catch (error) {
+    console.error('Anmeldung konnte nicht gespeichert werden.', error)
+    toast.show({
+      headline: 'Anmeldung unvollständig',
+      description: 'Bitte wählen Sie eine Exkursion aus, bevor Sie fortfahren.',
+      color: 'danger',
+    })
+  }
+}
 </script>
 
 <template>
@@ -80,7 +95,7 @@ const router = useRouter()
 
   <div class="VorZurueck">
     <OnyxButton label="Vorherige Seite" type="button" @click="router.push('/4')" />
-    <OnyxButton label="Weiter" type="button" @click="router.push('/6')" />
+    <OnyxButton label="Weiter" type="button" @click="goToDownload" />
   </div>
   
 </template>
