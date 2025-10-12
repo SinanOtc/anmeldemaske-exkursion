@@ -119,7 +119,7 @@ function goBack() {
     />
     <div class="VorZurueck">
       <OnyxButton label="Vorherige Seite" type="button" @click="goBack" />
-      <OnyxButton label="Weiter" type="submit" @click="router.push('/6')" />
+      <OnyxButton label="Weiter" type="submit" @click="router.push('/5')" />
     </div>
   </OnyxForm>
 </template>

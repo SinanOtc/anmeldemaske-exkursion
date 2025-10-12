@@ -1,32 +1,17 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import {
-  OnyxHeadline,
-  OnyxCard,
-  OnyxForm,
-  OnyxInput,
-  OnyxTextarea,
-  OnyxButton,
-  OnyxSelect,
-  type SelectOption,
-  useToast,
-} from 'sit-onyx'
+import { OnyxHeadline, OnyxCard, OnyxForm, OnyxInput, OnyxTextarea, OnyxButton, useToast } from 'sit-onyx'
 import { useRouter } from 'vue-router'
 
-import {
-  useAdminStore,
-  type AdminExkursion,
-  type AdminTeilnehmer,
-  type AdminTeilnehmerStatus,
-} from '@/stores/adminStore'
+import { useAdminStore, type AdminExkursion, type AdminTeilnehmer, type AdminTeilnehmerStatus } from '@/stores/adminStore'
 
 const router = useRouter()
 const adminStore = useAdminStore()
 adminStore.ensureHydrated()
 
 const toast = useToast()
-const { exkursionen, teilnehmer, distinctExkursionOptions } = storeToRefs(adminStore)
+const { exkursionen, teilnehmer } = storeToRefs(adminStore)
 
 const formState = reactive({
   id: '',
@@ -78,20 +63,27 @@ const persistExkursion = () => {
   const kapazitaetNumber = trimmedKapazitaet ? Number.parseInt(trimmedKapazitaet, 10) : NaN
 
   try {
-    adminStore.upsertExkursion({
-      id: formState.id,
-      titel: formState.titel,
-      datum: formState.datum,
-      ort: formState.ort,
-      beschreibung: formState.beschreibung || undefined,
-      kapazitaet: Number.isFinite(kapazitaetNumber) ? kapazitaetNumber : undefined,
-      archived: formState.archived,
-    })
+    adminStore.upsertExkursion(
+      {
+        id: formState.id,
+        titel: formState.titel,
+        datum: formState.datum,
+        ort: formState.ort,
+        beschreibung: formState.beschreibung || undefined,
+        kapazitaet: Number.isFinite(kapazitaetNumber) ? kapazitaetNumber : undefined,
+        archived: formState.archived,
+      },
+      editingId.value ?? undefined,
+    )
     toast.show({ headline: 'Gespeichert', description: 'Die Exkursion wurde gespeichert.', color: 'success' })
     resetForm()
   } catch (error) {
     console.error('Exkursion konnte nicht gespeichert werden', error)
-    toast.show({ headline: 'Fehler', description: 'Speichern fehlgeschlagen.', color: 'danger' })
+    toast.show({
+      headline: 'Fehler',
+      description: error instanceof Error ? error.message : 'Speichern fehlgeschlagen.',
+      color: 'danger',
+    })
   }
 }
 
@@ -114,26 +106,6 @@ const toggleArchive = (id: string, archived: boolean) => {
   })
 }
 
-const teilnehmerFilter = ref<string | null>(null)
-
-const teilnehmerOptions = computed<SelectOption<string>[]>(() => [
-  { label: 'Alle Exkursionen', value: 'all' },
-  ...distinctExkursionOptions.value,
-])
-
-const filteredTeilnehmer = computed(() => {
-  if (!teilnehmerFilter.value || teilnehmerFilter.value === 'all') {
-    return teilnehmer.value
-  }
-  return teilnehmer.value.filter((entry) => entry.exkursionId === teilnehmerFilter.value)
-})
-
-const statusOptions: SelectOption<AdminTeilnehmerStatus>[] = [
-  { label: 'Eingegangen', value: 'eingegangen' },
-  { label: 'Bestätigt', value: 'bestaetigt' },
-  { label: 'Abgelehnt', value: 'abgelehnt' },
-]
-
 const formatDate = (value: string) => {
   if (!value) return '—'
   const date = new Date(value)
@@ -141,39 +113,37 @@ const formatDate = (value: string) => {
   return date.toLocaleString()
 }
 
-const updateStatus = (entry: AdminTeilnehmer, status: AdminTeilnehmerStatus) => {
-  adminStore.updateTeilnehmerStatus(entry.id, status)
-  toast.show({ headline: 'Status aktualisiert', color: 'success' })
-}
+const totalTeilnehmer = computed(() => teilnehmer.value.length)
 
-const removeTeilnehmer = (entry: AdminTeilnehmer) => {
-  if (!window.confirm(`Anmeldung von ${entry.persoenlich.vorname} ${entry.persoenlich.nachname} löschen?`)) {
-    return
+const statusSummary = computed<Record<AdminTeilnehmerStatus, number>>(() =>
+  teilnehmer.value.reduce(
+    (acc, entry) => {
+      acc[entry.status] += 1
+      return acc
+    },
+    {
+      eingegangen: 0,
+      bestaetigt: 0,
+      abgelehnt: 0,
+    } as Record<AdminTeilnehmerStatus, number>,
+  ),
+)
+
+const latestSubmission = computed<AdminTeilnehmer | null>(() => {
+  if (!teilnehmer.value.length) {
+    return null
   }
-  adminStore.deleteTeilnehmer(entry.id)
-  toast.show({ headline: 'Anmeldung gelöscht', color: 'neutral' })
+  return teilnehmer.value.reduce<AdminTeilnehmer | null>((latest, current) => {
+    if (!latest) return current
+    return new Date(current.submittedAt).getTime() > new Date(latest.submittedAt).getTime() ? current : latest
+  }, null)
+})
+
+const goToTeilnehmerVerwaltung = () => {
+  router.push({ name: 'TeilnehmerTabelle' })
 }
 
-const exportTeilnehmer = () => {
-  const id = teilnehmerFilter.value && teilnehmerFilter.value !== 'all' ? teilnehmerFilter.value : undefined
-  const csv = adminStore.exportTeilnehmerCsv(id)
-  if (!csv || csv.trim().length === 0) {
-    toast.show({ headline: 'Keine Daten', description: 'Es liegen keine Anmeldungen vor.', color: 'neutral' })
-    return
-  }
-
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
-  const url = URL.createObjectURL(blob)
-  const suffix = id ? `_${id}` : '_alle'
-  const filename = `admin-teilnehmer${suffix}_${new Date().toISOString().replace(/[:T]/g, '-').slice(0, 19)}.csv`
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
-  URL.revokeObjectURL(url)
-}
+const activeExkursionenCount = computed(() => exkursionen.value.filter((entry) => !entry.archived).length)
 
 if (!adminStore.isAdmin) {
   toast.show({
@@ -253,78 +223,57 @@ if (!adminStore.isAdmin) {
         </div>
       </OnyxCard>
 
-      <OnyxCard class="admin__card">
-        <template #title>Anmeldungen</template>
+      <OnyxCard class="admin__card admin__card--overview">
+        <template #title>Anmeldungen verwalten</template>
 
-        <div class="admin-filter">
-          <OnyxSelect
-            v-model="teilnehmerFilter"
-            label="Exkursion filtern"
-            placeholder="Alle"
-            :options="teilnehmerOptions"
-            listLabel="Exkursionsauswahl"
-          />
-          <OnyxButton label="CSV exportieren" variant="ghost" @click="exportTeilnehmer" />
-        </div>
-
-        <p class="admin-counter">
-          {{ filteredTeilnehmer.length }} Anmeldung(en) gefunden.
+        <p class="admin-overview__intro">
+          Behalte den Überblick über alle eingegangenen Anmeldungen und öffne die detaillierte Teilnehmerverwaltung
+          für weitere Aktionen wie Statuspflege, Export oder Löschung einzelner Einträge.
         </p>
 
-        <div v-if="!filteredTeilnehmer.length" class="admin-empty">
+        <div class="admin-summary">
+          <div class="admin-summary__item">
+            <span class="admin-summary__label">Gesamt</span>
+            <span class="admin-summary__value">{{ totalTeilnehmer }}</span>
+          </div>
+          <div class="admin-summary__item">
+            <span class="admin-summary__label">Eingegangen</span>
+            <span class="admin-summary__value">{{ statusSummary.eingegangen }}</span>
+          </div>
+          <div class="admin-summary__item">
+            <span class="admin-summary__label">Bestätigt</span>
+            <span class="admin-summary__value">{{ statusSummary.bestaetigt }}</span>
+          </div>
+          <div class="admin-summary__item">
+            <span class="admin-summary__label">Abgelehnt</span>
+            <span class="admin-summary__value">{{ statusSummary.abgelehnt }}</span>
+          </div>
+          <div class="admin-summary__item">
+            <span class="admin-summary__label">Aktive Exkursionen</span>
+            <span class="admin-summary__value">{{ activeExkursionenCount }}</span>
+          </div>
+        </div>
+
+        <div v-if="latestSubmission" class="admin-latest">
+          <div class="admin-latest__label">Letzte Anmeldung</div>
+          <div class="admin-latest__content">
+            <strong>{{ latestSubmission.persoenlich.vorname }} {{ latestSubmission.persoenlich.nachname }}</strong>
+            <span>{{ formatDate(latestSubmission.submittedAt) }}</span>
+          </div>
+        </div>
+
+        <div v-else class="admin-empty">
           Noch keine Anmeldungen vorhanden.
         </div>
 
-        <div v-else class="admin-table-wrapper">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Exkursion</th>
-                <th>Status</th>
-                <th>Übermittelt</th>
-                <th>Aktionen</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="entry in filteredTeilnehmer" :key="entry.id">
-                <td>
-                  <div class="td-primary">
-                    {{ entry.persoenlich.vorname }} {{ entry.persoenlich.nachname }}
-                  </div>
-                  <div class="td-secondary">
-                    {{ entry.persoenlich.email }} · {{ entry.persoenlich.handy }}
-                  </div>
-                </td>
-                <td>
-                  {{ entry.exkursionSnapshot?.titel || entry.exkursionId }}
-                  <div class="td-secondary">ID: {{ entry.exkursionId }}</div>
-                </td>
-                <td>
-                  <OnyxSelect
-                    :modelValue="entry.status"
-                    :options="statusOptions"
-                    label="Status"
-                    listLabel="Status wählen"
-                    @update:modelValue="(value) => updateStatus(entry, value as AdminTeilnehmerStatus)"
-                  />
-                </td>
-                <td>
-                  <div class="td-primary">{{ formatDate(entry.submittedAt) }}</div>
-                  <div class="td-secondary">Aktualisiert: {{ formatDate(entry.updatedAt) }}</div>
-                </td>
-                <td class="td-actions">
-                  <OnyxButton label="Anmeldung löschen" variant="ghost" @click="removeTeilnehmer(entry)" />
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="admin-overview__actions">
+          <OnyxButton label="Teilnehmerverwaltung öffnen" @click="goToTeilnehmerVerwaltung" />
         </div>
       </OnyxCard>
     </div>
   </section>
   
-  <OnyxButton label="zur Startseite" @click="router.push('/1')"></OnyxButton>
+  <OnyxButton label="zur Startseite" @click="router.push('/')"></OnyxButton>
 </template>
 
 <style scoped>
@@ -425,17 +374,6 @@ if (!adminStore.isAdmin) {
   font-size: 0.75rem;
 }
 
-.admin-filter {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.admin-counter {
-  font-weight: 600;
-}
-
 .admin-empty {
   padding: 2rem;
   text-align: center;
@@ -443,33 +381,76 @@ if (!adminStore.isAdmin) {
   border-radius: 0.75rem;
 }
 
-.admin-table-wrapper {
-  overflow-x: auto;
+.admin-overview__intro {
+  margin: 0;
+  line-height: 1.5;
+  color: var(--onyx-on-surface-variant);
 }
 
-.admin-table {
-  width: 100%;
-  border-collapse: collapse;
+.admin-summary {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
 }
 
-.admin-table th,
-.admin-table td {
-  text-align: left;
-  padding: 0.75rem;
-  border-bottom: 1px solid var(--onyx-outline-variant);
+.admin-summary__item {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: var(--onyx-surface-container-low);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
 }
 
-.td-primary {
+.admin-summary__label {
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--onyx-on-surface-variant);
+}
+
+.admin-summary__value {
+  font-size: 1.5rem;
   font-weight: 600;
 }
 
-.td-secondary {
-  font-size: 0.8125rem;
-  opacity: 0.7;
+.admin-latest {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: var(--onyx-surface-container-low);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
-.td-actions {
+.admin-latest__label {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--onyx-on-surface-variant);
+}
+
+.admin-latest__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.admin-latest__content span {
+  font-size: 0.875rem;
+  color: var(--onyx-on-surface-variant);
+}
+
+.admin-overview__actions {
   display: flex;
   align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.admin__card--overview {
+  gap: 1.5rem;
 }
 </style>

@@ -1,14 +1,8 @@
 <script setup lang="ts">
 import { RouterLink, RouterView, useRoute } from 'vue-router'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 
-import {
-  OnyxAppLayout,
-  OnyxHeadline,
-  OnyxPageLayout,
-  OnyxProgressSteps,
-  type ControlledProgressStep,
-} from 'sit-onyx'
+import { OnyxAppLayout, OnyxPageLayout, OnyxProgressSteps, type ControlledProgressStep } from 'sit-onyx'
 
 const route = useRoute()
 
@@ -49,18 +43,12 @@ const steps: ControlledProgressStep[] = [
         </OnyxSidebar>
       </template> -->
 
-      <header style="width: 100%">
-        <nav
-          style="
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            gap: 2em;
-          "
-        >
-          <OnyxProgressSteps v-if="showStepper" v-model="activeStep" :steps="steps" />
-        </nav>
+      <header v-if="showStepper" class="app-header">
+        <div class="app-header__branding">
+          <span class="app-header__title">DHBW Exkursionsanmeldung</span>
+        </div>
+
+        <OnyxProgressSteps v-model="activeStep" :steps="steps" />
       </header>
 
       <!-- page content -->
@@ -81,5 +69,26 @@ const steps: ControlledProgressStep[] = [
 <style>
 main {
   min-height: 80dvh;
+}
+
+.app-header {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem 0;
+  box-sizing: border-box;
+}
+
+.app-header__branding {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.app-header__title {
+  font-weight: 600;
+  font-size: 1.25rem;
 }
 </style>

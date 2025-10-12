@@ -9,6 +9,7 @@ import StartseiteView from '@/views/StartseiteView.vue'
 import DownloadView from '@/views/DownloadView.vue'
 import AdminView from '@/views/AdminView.vue'
 import { useAdminStore } from '@/stores/adminStore'
+import TabelleView from '@/views/TabelleView.vue'
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,6 +23,12 @@ export const router = createRouter({
       path: '/admin',
       name: 'AdminPanel',
       component: AdminView,
+      meta: { requiresAdmin: true },
+    },
+    {
+      path: '/admin/tabelle',
+      name: 'TeilnehmerTabelle',
+      component: TabelleView,
       meta: { requiresAdmin: true },
     },
     {

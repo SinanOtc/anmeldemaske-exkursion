@@ -180,7 +180,10 @@ export const useAdminStore = defineStore('admin', {
       this.persistAuth()
     },
 
-    upsertExkursion(payload: Omit<AdminExkursion, 'createdAt' | 'updatedAt'> & { id: string }) {
+    upsertExkursion(
+      payload: Omit<AdminExkursion, 'createdAt' | 'updatedAt'> & { id: string },
+      originalId?: string,
+    ) {
       this.ensureHydrated()
 
       const trimmedId = payload.id.trim()
@@ -188,7 +191,16 @@ export const useAdminStore = defineStore('admin', {
         throw new Error('Eine Exkursions-ID ist erforderlich.')
       }
 
-      const existingIndex = this.exkursionen.findIndex((item) => item.id === trimmedId)
+      const matchId = (originalId ? originalId.trim() : trimmedId) || trimmedId
+      const existingIndex = this.exkursionen.findIndex((item) => item.id === matchId)
+      const conflictIndex = this.exkursionen.findIndex(
+        (item) => item.id === trimmedId && item.id !== matchId,
+      )
+
+      if (conflictIndex >= 0 && conflictIndex !== existingIndex) {
+        throw new Error('Die gewünschte Exkursions-ID ist bereits vergeben.')
+      }
+
       if (existingIndex >= 0) {
         const previous = this.exkursionen[existingIndex]
         const updated: AdminExkursion = sanitizeExkursion({

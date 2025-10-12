@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { OnyxButton, OnyxCard, OnyxHeadline, useToast } from 'sit-onyx'
 import jsPDF from 'jspdf'
@@ -9,6 +9,8 @@ import { useAnmeldungStore } from '@/stores/anmeldungsStore'
 const store = useAnmeldungStore()
 const router = useRouter()
 const toast = useToast()
+
+const sending = ref(false)
 
 const headers = [
   'exkursion_titel',
@@ -46,6 +48,7 @@ const row = computed<Record<(typeof headers)[number], string>>(() => {
 })
 
 const isSubmitted = computed(() => store.isSubmitted)
+const canFinalize = computed(() => store.isComplete && !sending.value)
 
 const fieldLabels: Record<(typeof headers)[number], string> = {
   exkursion_titel: 'Exkursionstitel',
@@ -157,6 +160,75 @@ function downloadPdf() {
 
   doc.save(filename)
 }
+
+async function finalizeAndSendEmail() {
+  if (sending.value) {
+    return
+  }
+
+  if (!store.isComplete) {
+    toast.show({
+      headline: 'Angaben unvollständig',
+      description: 'Bitte prüfen Sie Ihre Eingaben, bevor Sie die Anmeldung absenden.',
+      color: 'warning',
+    })
+    return
+  }
+
+  sending.value = true
+  try {
+    if (!store.isSubmitted) {
+      try {
+        store.submitAnmeldung()
+      } catch (error) {
+        console.error('Anmeldung konnte nicht gespeichert werden.', error)
+        toast.show({
+          headline: 'Speichern fehlgeschlagen',
+          description: 'Bitte aktualisieren Sie Ihre Angaben und versuchen Sie es erneut.',
+          color: 'danger',
+        })
+        return
+      }
+    }
+
+    const response = await fetch('/api/anmeldungen/bestaetigung', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        anmeldungId: store.anmeldungId,
+        exkursionId: store.exkursion.id,
+        vorname: store.persoenlich.vorname,
+        nachname: store.persoenlich.nachname,
+        email: store.persoenlich.email,
+      }),
+    })
+
+    if (!response.ok) {
+      const message = await response.text().catch(() => '')
+      toast.show({
+        headline: 'Bestätigung nicht gesendet',
+        description: message || 'Bitte versuchen Sie es später erneut.',
+        color: 'danger',
+      })
+      return
+    }
+
+    toast.show({
+      headline: 'Anmeldung bestätigt',
+      description: 'Sie erhalten in Kürze eine Bestätigung per E-Mail.',
+      color: 'success',
+    })
+  } catch (error) {
+    console.error('Bestätigungsmail konnte nicht gesendet werden.', error)
+    toast.show({
+      headline: 'Versand fehlgeschlagen',
+      description: 'Bitte versuchen Sie es später erneut.',
+      color: 'danger',
+    })
+  } finally {
+    sending.value = false
+  }
+}
 </script>
 
 <template>
@@ -183,12 +255,17 @@ function downloadPdf() {
   </OnyxCard>
 
   <div class="center-container">
+    <OnyxButton
+      :disabled="!canFinalize"
+      :label="sending ? 'Wird gesendet…' : 'Jetzt verbindlich anmelden'"
+      @click="finalizeAndSendEmail"
+    />
     <OnyxButton label="CSV herunterladen" @click="downloadCsv" />
     <OnyxButton label="PDF herunterladen" variant="outline" @click="downloadPdf" />
   </div>
 
   <div class="VorZurueck">
-    <OnyxButton label="Vorherige Seite" type="button" @click="router.push('/4')" />
+    <OnyxButton label="Vorherige Seite" type="button" @click="router.push('/5')" />
     <OnyxButton label="Zum Exkursionsportal" type="button" @click="router.push('/')" />
   </div>
 </template>

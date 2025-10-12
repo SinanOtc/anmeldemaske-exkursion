@@ -87,8 +87,6 @@ const handleSubmit = () => {
       :options="exkursionOptions"
     />
 
-    <OnyxInput v-model="inputValue" label="Exkursions-ID" placeholder="ID eingeben..." required />
-
     <p v-if="selectedExkursion" class="exkursion-hinweis">
       {{ selectedExkursion.titel }} – {{ selectedExkursion.ort }} ({{ selectedExkursion.datum || 'Zeitraum offen' }})
     </p>
