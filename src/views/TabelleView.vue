@@ -31,11 +31,15 @@ const exkursionFilter = ref<string>('all')
 const statusFilter = ref<'all' | AdminTeilnehmerStatus>('all')
 const sortDescending = ref(true)
 
-const statusFilterOptions: SelectOption<'all' | AdminTeilnehmerStatus>[] = [
-  { label: 'Alle Status', value: 'all' },
+const statusOptions: SelectOption<AdminTeilnehmerStatus>[] = [
   { label: 'Eingegangen', value: 'eingegangen' },
   { label: 'Bestätigt', value: 'bestaetigt' },
   { label: 'Abgelehnt', value: 'abgelehnt' },
+]
+
+const statusFilterOptions: SelectOption<'all' | AdminTeilnehmerStatus>[] = [
+  { label: 'Alle Status', value: 'all' },
+  ...statusOptions,
 ]
 
 const exkursionOptions = computed<SelectOption<string>[]>(() => [
@@ -355,7 +359,7 @@ const exportFilteredCsv = () => {
                   :modelValue="entry.status"
                   label="Status"
                   listLabel="Status wählen"
-                  :options="statusFilterOptions.slice(1)"
+                  :options="statusOptions"
                   @update:modelValue="(value) => updateStatus(entry, value as AdminTeilnehmerStatus)"
                 />
               </td>
