@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// Wizard step 3: collect the mandatory emergency contact details.
 import {
   OnyxHeadline,
   OnyxForm,
@@ -30,6 +31,7 @@ onMounted(() => {
   inputNotfallkontaktTelefonnummer.value = store.notfall.telefon
 })
 
+// Persist the emergency contact inside the draft store.
 function persistEmergencyContact() {
   store.setNotfall({
     name: inputNotfallkontaktName.value,
@@ -57,9 +59,11 @@ function goBack() {
 </script>
 
 <template>
+  <!-- Section headline -->
   <OnyxHeadline is="h2">Notfallkontakt</OnyxHeadline>
 
   <OnyxForm class="form" @submit.prevent="handleSubmit">
+    <!-- Emergency contact information -->
     <OnyxInput label="Name des Notfallkontakts" v-model="inputNotfallkontaktName" required />
     <OnyxInput label="Beziehung zum Teilnehmer" v-model="inputNotfallkontaktBeziehung" required />
     <OnyxInput
@@ -68,6 +72,7 @@ function goBack() {
       required
     />
 
+  <!-- Navigation between steps -->
   <div class="VorZurueck">
     <OnyxButton label="Vorherige Seite" type="button" @click="goBack" />
     <OnyxButton label="Weiter" type="submit" />

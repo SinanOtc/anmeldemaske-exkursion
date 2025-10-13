@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// Wraps the entire SPA shell and controls when the stepper header should appear.
 import { RouterLink, RouterView, useRoute } from 'vue-router'
 import { computed } from 'vue'
 
@@ -6,6 +7,7 @@ import { OnyxAppLayout, OnyxPageLayout, OnyxProgressSteps, type ControlledProgre
 
 const route = useRoute()
 
+// Only show the stepper for numeric wizard routes (1-6) and hide it elsewhere.
 const showStepper = computed<boolean>(() => {
   if (route.path === '/' || route.path === '/about' || route.path.startsWith('/admin')) {
     return false
@@ -14,11 +16,13 @@ const showStepper = computed<boolean>(() => {
   return Number.isFinite(pathNum) && pathNum > 0
 })
 
+// Map the current route to the active step in the progress component.
 const activeStep = computed(() => {
   const pathNum = Number(route.path.replace('/', ''))
   return Number.isFinite(pathNum) ? pathNum : 0
 })
 
+// Ordered labels that feed the controlled progress component.
 const steps: ControlledProgressStep[] = [
   { label: 'Exkursionswahl' },
   { label: 'Persönliche Daten' },
@@ -43,6 +47,7 @@ const steps: ControlledProgressStep[] = [
         </OnyxSidebar>
       </template> -->
 
+      <!-- Wizard header solely for the Anmeldung-Schritte routes -->
       <header v-if="showStepper" class="app-header">
         <div class="app-header__branding">
           <span class="app-header__title">DHBW Exkursionsanmeldung</span>

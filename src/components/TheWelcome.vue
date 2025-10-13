@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// Default Vue welcome component kept for reference/debugging.
 import WelcomeItem from './WelcomeItem.vue'
 import DocumentationIcon from './icons/IconDocumentation.vue'
 import ToolingIcon from './icons/IconTooling.vue'

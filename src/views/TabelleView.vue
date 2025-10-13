@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// Dedicated admin table view with advanced filtering, export and inline actions.
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
@@ -59,6 +60,7 @@ const statusChipClass: Record<AdminTeilnehmerStatus, string> = {
   abgelehnt: 'status-chip--danger',
 }
 
+// Combine search term, status filter and excursion filter.
 const filteredTeilnehmer = computed<AdminTeilnehmer[]>(() => {
   const search = searchTerm.value.trim().toLowerCase()
   const selectedStatus = statusFilter.value
@@ -97,6 +99,7 @@ const filteredTeilnehmer = computed<AdminTeilnehmer[]>(() => {
   })
 })
 
+// Stable sort by submission date, newest first by default.
 const sortedTeilnehmer = computed<AdminTeilnehmer[]>(() => {
   const list = [...filteredTeilnehmer.value]
   return list.sort((a, b) => {
@@ -115,6 +118,7 @@ const formatDate = (value: string) => {
   return date.toLocaleString()
 }
 
+// Quick completeness check to surface missing fields to admins.
 const isEintragVollstaendig = (entry: AdminTeilnehmer) => {
   const perso = entry.persoenlich
   const notfall = entry.notfall
@@ -137,6 +141,7 @@ const goBack = () => {
   router.push({ name: 'AdminPanel' })
 }
 
+// React to status changes triggered from the table select.
 const updateStatus = (entry: AdminTeilnehmer, value: AdminTeilnehmerStatus) => {
   if (entry.status === value) {
     return
@@ -153,10 +158,11 @@ const removeTeilnehmer = (entry: AdminTeilnehmer) => {
   toast.show({ headline: 'Anmeldung gelöscht', color: 'neutral' })
 }
 
+// Convenience action to start an email to the participant.
 const mailTeilnehmer = (entry: AdminTeilnehmer) => {
   window.location.href = `mailto:${entry.persoenlich.email}`
 }
-
+// Escape CSV values to avoid breaking delimiter-separated exports.
 const escapeCsv = (value: unknown) => {
   if (value == null) {
     return '""'
@@ -165,6 +171,7 @@ const escapeCsv = (value: unknown) => {
   return `"${stringValue.replace(/"/g, '""')}"`
 }
 
+// Export the currently filtered list so admins can work offline.
 const exportFilteredCsv = () => {
   const data = sortedTeilnehmer.value
   if (!data.length) {
@@ -243,8 +250,10 @@ const exportFilteredCsv = () => {
 
 <template>
   <section class="table-view">
+    <!-- Full-featured admin list of all registrations -->
     <OnyxHeadline is="h2">Teilnehmerverwaltung</OnyxHeadline>
 
+    <!-- Filter controls for status, excursion and free-text search -->
     <OnyxCard class="table-view__filters">
       <template #title>Filter &amp; Suche</template>
       <div class="filters">
@@ -275,7 +284,6 @@ const exportFilteredCsv = () => {
       </div>
       <div class="filters__actions">
         <OnyxButton label="CSV exportieren" variant="ghost" @click="exportFilteredCsv" />
-        <OnyxButton label="Zurück zum Adminbereich" @click="goBack" />
       </div>
     </OnyxCard>
 
@@ -283,6 +291,7 @@ const exportFilteredCsv = () => {
       {{ resultCount }} Anmeldung(en) gefunden.
     </p>
 
+    <!-- Responsive table with detail columns and inline actions -->
     <OnyxCard class="table-view__card">
       <template #title>Teilnehmerliste</template>
 
@@ -382,6 +391,11 @@ const exportFilteredCsv = () => {
       </div>
     </OnyxCard>
   </section>
+
+  
+  <div class="table-view__back-home">
+    <OnyxButton label="Zurück zum Adminbereich" @click="goBack" />
+  </div>
 </template>
 
 <style scoped>
@@ -523,6 +537,13 @@ const exportFilteredCsv = () => {
 
 .button-danger {
   color: var(--onyx-error);
+}
+
+.table-view__back-home {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  z-index: 10;
 }
 
 @media (max-width: 1024px) {

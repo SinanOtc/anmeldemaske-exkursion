@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// Wizard step 2: capture personal and travel information for the participant.
 import {
   OnyxInput,
   OnyxButton,
@@ -39,6 +40,7 @@ const travelOpen = ref(false)
 const company = ref<string | null>(null)
 const companyOpen = ref(false)
 
+// Normalised options for travel modes, companion preference and identity document.
 const options1: SelectOption<string>[] = [
   {
     value: 'auto',
@@ -113,6 +115,7 @@ onMounted(() => {
 
 })
 
+// Push the current form state into the Pinia store using domain enums.
 function persistPerson() {
   store.setPersoenlich({
     vorname: inputVorname.value,
@@ -164,9 +167,11 @@ function goBack() {
 </script>
 
 <template>
+  <!-- Step headline keeps the wizard consistent -->
   <OnyxHeadline is="h2">Persönliche Daten</OnyxHeadline>
 
   <OnyxForm class="form" @submit.prevent="handleSubmit">
+    <!-- Core identity information -->
     <div class="vorUndNachname">
       <OnyxInput label="Vorname" v-model="inputVorname" required />
       <OnyxInput label="Nachname" v-model="inputNachname" required />
@@ -184,6 +189,7 @@ function goBack() {
     <OnyxInput label="Email-Adresse" v-model="inputEmail" required />
 
 
+    <!-- Travel preference helps the organisers coordinate logistics -->
     <OnyxSelect
       label="Wie reisen Sie an?"
       listLabel="List label"
@@ -193,6 +199,7 @@ function goBack() {
       placeholder="Anreisen mit dem..."
     />
 
+    <!-- Show plane-specific field only when relevant -->
     <OnyxInput
       v-if="travel === 'flugzeug'"
       v-model="inputFlugzeug"
@@ -200,6 +207,7 @@ function goBack() {
       placeholder="Flugnummer eingeben..."
     />
 
+    <!-- Capture whether the participant travels solo or with company -->
     <OnyxSelect
       label="Kommen Sie alleine oder in einer Gruppe?"
       listLabel="List label"
@@ -209,6 +217,7 @@ function goBack() {
       placeholder="Bin ich alleine?"
     />
 
+  <!-- Navigation buttons to move between wizard steps -->
   <div class="VorZurueck">
     <OnyxButton label="Vorherige Seite" type="button" @click="goBack" />
     <OnyxButton label="Weiter" type="submit" />

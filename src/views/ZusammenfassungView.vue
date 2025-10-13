@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// Wizard step 5: summarise collected data, allow corrections, trigger final submission.
 import { OnyxHeadline, OnyxCard, OnyxButton, OnyxTextarea, useToast } from 'sit-onyx'
 import { useRouter } from 'vue-router'
 
@@ -11,6 +12,7 @@ const { exkursion, persoenlich, notfall, note } = storeToRefs(store)
 const router = useRouter()
 const toast = useToast()
 
+// Submit the finished registration; fall back to the relevant step if required fields are missing.
 const goToDownload = () => {
   try {
     store.submitAnmeldung()
@@ -27,9 +29,11 @@ const goToDownload = () => {
 </script>
 
 <template>
+  <!-- Recap of all gathered information before submission -->
   <OnyxHeadline is="h2">Zusammenfassung</OnyxHeadline>
 
   <div class="grid gap-6 md:grid-cols-2 mt-6">
+    <!-- Overview of the chosen excursion -->
     <OnyxCard>
       <template #title>Exkursionsdaten</template>
       <dl class="kv">
@@ -47,7 +51,7 @@ const goToDownload = () => {
       >
     </OnyxCard>
 
-    <!-- 2) Persönliche Angaben -->
+    <!-- Personal details -->
     <OnyxCard>
       <template #title>Persönliche Angaben</template>
       <dl class="kv">
@@ -65,7 +69,7 @@ const goToDownload = () => {
       >
     </OnyxCard>
 
-    <!-- 3) Notfallkontakt -->
+    <!-- Emergency contact details -->
     <OnyxCard>
       <template #title>Notfallkontakt</template>
       <dl class="kv">
@@ -93,6 +97,7 @@ const goToDownload = () => {
     </OnyxCard>
   </div>
 
+  <!-- Navigate back to declarations or continue to the download -->
   <div class="VorZurueck">
     <OnyxButton label="Vorherige Seite" type="button" @click="router.push('/4')" />
     <OnyxButton label="Weiter" type="button" @click="goToDownload" />

@@ -1,3 +1,4 @@
+// Entry file that wires together Vue, Pinia, routing and the Onyx UI library.
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { createOnyx } from 'sit-onyx'
@@ -15,6 +16,7 @@ import './assets/main.css'
 import "@fontsource-variable/source-code-pro";
 import "@fontsource-variable/source-sans-3";
 
+// Configure Onyx once so that router-linked components (e.g. dialogs) behave correctly.
 const onyx = createOnyx({
   // if you are using the Vue Router, make sure to pass it here be enable the router integration for onyx
   router: router,
@@ -23,10 +25,12 @@ const onyx = createOnyx({
 const app = createApp(App)
 const pinia = createPinia()
 
+// Register global plugins.
 app.use(pinia)
 app.use(router)
 app.use(onyx)
 
+// Attempt to restore persisted admin data before the app mounts.
 useAdminStore(pinia).hydrate()
 
 app.mount('#app')

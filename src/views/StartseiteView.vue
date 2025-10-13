@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// Public landing page that lists highlighted excursions and exposes admin shortcuts.
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
@@ -33,6 +34,7 @@ const showLoginPanel = ref(false)
 const adminToken = ref('')
 const loginBusy = ref(false)
 
+// Present at most five of the freshest, active excursions in the hero cards.
 const sortedAktiveExkursionen = computed(() =>
   [...exkursionen.value]
     .filter((item) => !item.archived)
@@ -40,6 +42,7 @@ const sortedAktiveExkursionen = computed(() =>
     .slice(0, 5),
 )
 
+// Modal helpers for the lightweight token login.
 const openLogin = () => {
   adminToken.value = ''
   showLoginPanel.value = true
@@ -71,6 +74,7 @@ const attemptLogin = async () => {
   }
 }
 
+// Drop any admin state and revert to the public view.
 const logout = () => {
   adminStore.logout()
   toast.show({ headline: 'Abgemeldet', color: 'neutral' })
@@ -82,6 +86,7 @@ const logout = () => {
     <OnyxHeadline is="h1">Exkursionsportal</OnyxHeadline>
   </div>
 
+  <!-- Quick access toolbar with help, admin login or logout -->
   <div class="portal-content">
     <header class="portal-header">
       <div class="portal-header__actions">
@@ -99,6 +104,7 @@ const logout = () => {
     </header>
   </div>
 
+  <!-- Main navigation bar with entry into the wizard -->
   <div class="NavbarOben">
     <OnyxNavBar appName="Exkursionsportal der DHBW" logoUrl="/kevin.JPG">
       <OnyxNavItem label="Daten bearbeiten" @click="router.push('/1')"> </OnyxNavItem>
@@ -107,6 +113,7 @@ const logout = () => {
     </OnyxNavBar>
   </div>
 
+  <!-- Highlight active excursions for fast orientation -->
   <section v-if="sortedAktiveExkursionen.length" class="exkursionen">
     <OnyxHeadline is="h3">Aktive Exkursionen</OnyxHeadline>
     <div class="exkursionen__grid">
@@ -129,6 +136,7 @@ const logout = () => {
     </div>
   </section>
 
+  <!-- Minimal token login overlay for admins -->
   <div v-if="showLoginPanel" class="login-panel">
     <OnyxCard class="login-card">
       <template #title>Admin-Login</template>

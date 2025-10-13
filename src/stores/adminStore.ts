@@ -1,3 +1,4 @@
+// Pinia store that backs the admin dashboard with persistence, auth and CSV exports.
 import { defineStore } from 'pinia'
 
 import type {
@@ -11,8 +12,10 @@ const AUTH_STORAGE_KEY = 'admin-auth'
 const DATA_STORAGE_KEY = 'admin-data'
 const FALLBACK_ADMIN_TOKEN = 'hallo-admin'
 
+// Shared status vocabulary for submissions.
 export type AdminTeilnehmerStatus = 'eingegangen' | 'bestaetigt' | 'abgelehnt'
 
+// Enriched excursion record with metadata shown in the admin view.
 export interface AdminExkursion extends Exkursion {
   beschreibung?: string
   kapazitaet?: number
@@ -21,6 +24,7 @@ export interface AdminExkursion extends Exkursion {
   archived?: boolean
 }
 
+// Persisted submission including the questionnaire snapshot.
 export interface AdminTeilnehmer {
   id: string
   exkursionId: string
@@ -34,11 +38,13 @@ export interface AdminTeilnehmer {
   exkursionSnapshot?: Exkursion
 }
 
+// Shape of the persisted data blob in localStorage.
 interface AdminDataSnapshot {
   exkursionen: AdminExkursion[]
   teilnehmer: AdminTeilnehmer[]
 }
 
+// Runtime state extends the snapshot with auth flags and hydration metadata.
 interface AdminState extends AdminDataSnapshot {
   isAdmin: boolean
   adminToken: string
@@ -47,10 +53,12 @@ interface AdminState extends AdminDataSnapshot {
   hydrated: boolean
 }
 
+// Local helper so every timestamp originates from one place.
 function nowIso() {
   return new Date().toISOString()
 }
 
+// Defensive trimming to avoid surprise whitespace when persisting excursions.
 function sanitizeExkursion(payload: AdminExkursion): AdminExkursion {
   const cleaned: AdminExkursion = {
     titel: payload.titel.trim(),
@@ -79,7 +87,9 @@ export const useAdminStore = defineStore('admin', {
   }),
 
   getters: {
+    // Flags for UI states in admin dashboards.
     hasExkursionen: (state) => state.exkursionen.length > 0,
+    // Lookup helpers keep components lean.
     exkursionById: (state) => (id: string) => state.exkursionen.find((e) => e.id === id) ?? null,
     teilnehmerByExkursion: (state) => (exkursionId: string | null) =>
       exkursionId
@@ -92,6 +102,7 @@ export const useAdminStore = defineStore('admin', {
   },
 
   actions: {
+    // Restores persisted auth and data payloads from localStorage once per session.
     hydrate() {
       if (this.hydrated) {
         return
@@ -132,6 +143,7 @@ export const useAdminStore = defineStore('admin', {
       }
     },
 
+    // Writes current auth flags to storage.
     persistAuth() {
       localStorage.setItem(
         AUTH_STORAGE_KEY,
@@ -142,6 +154,7 @@ export const useAdminStore = defineStore('admin', {
       )
     },
 
+    // Serialises excursion and participant lists for offline persistence.
     persistData() {
       const payload: AdminDataSnapshot = {
         exkursionen: this.exkursionen,
@@ -152,12 +165,14 @@ export const useAdminStore = defineStore('admin', {
       localStorage.setItem(DATA_STORAGE_KEY, JSON.stringify(snapshot))
     },
 
+    // Public guard to make sure hydration happened before reading state.
     ensureHydrated() {
       if (!this.hydrated) {
         this.hydrate()
       }
     },
 
+    // Compares the provided token and marks the session as admin when valid.
     login(token: string) {
       this.ensureHydrated()
       const expectedToken = import.meta.env.VITE_ADMIN_TOKEN || FALLBACK_ADMIN_TOKEN
@@ -174,12 +189,14 @@ export const useAdminStore = defineStore('admin', {
       return false
     },
 
+    // Removes admin privileges and clears the cached token.
     logout() {
       this.isAdmin = false
       this.adminToken = ''
       this.persistAuth()
     },
 
+    // Creates or updates an excursion entry, protecting against ID collisions.
     upsertExkursion(
       payload: Omit<AdminExkursion, 'createdAt' | 'updatedAt'> & { id: string },
       originalId?: string,
@@ -224,6 +241,7 @@ export const useAdminStore = defineStore('admin', {
       this.persistData()
     },
 
+    // Toggle archived flag without removing the original data.
     toggleArchiveExkursion(id: string, archived: boolean) {
       this.ensureHydrated()
       const target = this.exkursionen.find((entry) => entry.id === id)
@@ -235,12 +253,14 @@ export const useAdminStore = defineStore('admin', {
       this.persistData()
     },
 
+    // Permanently removes an excursion from the list (existing submissions stay intact).
     deleteExkursion(id: string) {
       this.ensureHydrated()
       this.exkursionen = this.exkursionen.filter((entry) => entry.id !== id)
       this.persistData()
     },
 
+    // Called from the public wizard to capture a submission snapshot for the admin.
     recordSubmission(payload: Omit<AdminTeilnehmer, 'status' | 'submittedAt' | 'updatedAt'> & {
       status?: AdminTeilnehmerStatus
       submittedAt?: string
@@ -267,6 +287,7 @@ export const useAdminStore = defineStore('admin', {
       this.persistData()
     },
 
+    // Update helper bound to the status dropdown in the admin table.
     updateTeilnehmerStatus(id: string, status: AdminTeilnehmerStatus) {
       this.ensureHydrated()
       const target = this.teilnehmer.find((entry) => entry.id === id)
@@ -278,12 +299,14 @@ export const useAdminStore = defineStore('admin', {
       this.persistData()
     },
 
+    // Remove a submission entirely (used by admin cleanup workflow).
     deleteTeilnehmer(id: string) {
       this.ensureHydrated()
       this.teilnehmer = this.teilnehmer.filter((entry) => entry.id !== id)
       this.persistData()
     },
 
+    // Generates a CSV export that mirrors the tabular admin view.
     exportTeilnehmerCsv(exkursionId?: string) {
       this.ensureHydrated()
 

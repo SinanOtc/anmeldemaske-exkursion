@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// Wizard step 1: capture the excursion the student wants to join.
 import {
   OnyxInput,
   OnyxButton,
@@ -22,8 +23,10 @@ const store = useAnmeldungStore()
 const adminStore = useAdminStore()
 adminStore.ensureHydrated()
 
+// Options (for select) are derived from active excursions in the admin store.
 const exkursionOptions = computed<SelectOption<string>[]>(() => adminStore.distinctExkursionOptions)
 
+// Resolve live details while the user types an ID manually.
 const selectedExkursion = computed(() =>
   inputValue.value.trim() ? adminStore.exkursionById(inputValue.value.trim()) : null,
 )
@@ -41,6 +44,7 @@ watch(selectedExkursionId, (value) => {
   }
 })
 
+// Persist the chosen ID and carry the user to the next form step.
 const handleSubmit = () => {
   const trimmedId = inputValue.value.trim()
   if (!trimmedId) {
@@ -76,6 +80,7 @@ const handleSubmit = () => {
 }
 </script>
 <template>
+  <!-- Provide both a dropdown of known excursions and a manual fallback -->
   <OnyxHeadline is="h2">Exkursions-ID eingeben</OnyxHeadline>
   <OnyxForm class="form" @submit.prevent="handleSubmit">
     <OnyxSelect

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// Main admin dashboard: manage excursions and get a quick overview of submissions.
 import { computed, reactive, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { OnyxHeadline, OnyxCard, OnyxForm, OnyxInput, OnyxTextarea, OnyxButton, useToast } from 'sit-onyx'
@@ -24,6 +25,7 @@ const formState = reactive({
 })
 const editingId = ref<string | null>(null)
 
+// Reset the form to a clean slate after submitting or cancelling edits.
 const resetForm = () => {
   formState.id = ''
   formState.titel = ''
@@ -48,6 +50,7 @@ const startEdit = (exkursion: AdminExkursion) => {
 
 const submitLabel = computed(() => (editingId.value ? 'Änderungen speichern' : 'Exkursion anlegen'))
 
+// Validate and persist the current excursion form into the admin store.
 const persistExkursion = () => {
   if (!formState.id.trim()) {
     toast.show({ headline: 'Ungültige Exkursion', description: 'Bitte eine eindeutige ID angeben.', color: 'danger' })
@@ -115,6 +118,7 @@ const formatDate = (value: string) => {
 
 const totalTeilnehmer = computed(() => teilnehmer.value.length)
 
+// Aggregate submission counts by status for the dashboard KPI cards.
 const statusSummary = computed<Record<AdminTeilnehmerStatus, number>>(() =>
   teilnehmer.value.reduce(
     (acc, entry) => {
@@ -160,6 +164,7 @@ if (!adminStore.isAdmin) {
     <OnyxHeadline is="h2">Adminbereich</OnyxHeadline>
 
     <div class="admin__grid">
+      <!-- Form to create or update excursions -->
       <OnyxCard class="admin__card">
         <template #title>Exkursionen verwalten</template>
 
@@ -223,6 +228,7 @@ if (!adminStore.isAdmin) {
         </div>
       </OnyxCard>
 
+      <!-- Overview card with submission KPIs and shortcut to participant table -->
       <OnyxCard class="admin__card admin__card--overview">
         <template #title>Anmeldungen verwalten</template>
 
@@ -272,8 +278,10 @@ if (!adminStore.isAdmin) {
       </OnyxCard>
     </div>
   </section>
-  
-  <OnyxButton label="zur Startseite" @click="router.push('/')"></OnyxButton>
+
+  <div class="admin__back-home">
+    <OnyxButton label="Zur Startseite" @click="router.push('/')" />
+  </div>
 </template>
 
 <style scoped>
@@ -452,5 +460,12 @@ if (!adminStore.isAdmin) {
 
 .admin__card--overview {
   gap: 1.5rem;
+}
+
+.admin__back-home {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  z-index: 10;
 }
 </style>

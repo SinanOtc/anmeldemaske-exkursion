@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// Wizard step 6: provide downloadable copies of the registration and trigger the mail workflow.
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { OnyxButton, OnyxCard, OnyxHeadline, useToast } from 'sit-onyx'
@@ -12,6 +13,7 @@ const toast = useToast()
 
 const sending = ref(false)
 
+// Column order shared between CSV export and PDF rendering.
 const headers = [
   'exkursion_titel',
   'exkursion_datum',
@@ -28,6 +30,7 @@ const headers = [
   'note',
 ] as const
 
+// Flatten the store state into a shape the exporters can easily reuse.
 const row = computed<Record<(typeof headers)[number], string>>(() => {
   const s = store.$state
   return {
@@ -50,6 +53,7 @@ const row = computed<Record<(typeof headers)[number], string>>(() => {
 const isSubmitted = computed(() => store.isSubmitted)
 const canFinalize = computed(() => store.isComplete && !sending.value)
 
+// UX-friendly labels consumed by the preview table as well as the PDF.
 const fieldLabels: Record<(typeof headers)[number], string> = {
   exkursion_titel: 'Exkursionstitel',
   exkursion_datum: 'Exkursionszeitraum',
@@ -66,6 +70,7 @@ const fieldLabels: Record<(typeof headers)[number], string> = {
   note: 'Anmerkungen',
 }
 
+// Shape data for rendering within the summary card.
 const previewFields = computed(() =>
   headers.map((key) => ({
     key,
@@ -74,6 +79,7 @@ const previewFields = computed(() =>
   })),
 )
 
+// Final safety net: when the user hits this step directly we still attempt to submit.
 onMounted(() => {
   if (!isSubmitted.value) {
     try {
@@ -89,18 +95,21 @@ onMounted(() => {
   }
 })
 
+// Escape helper to keep exported CSV readable even when fields contain delimiters.
 function escapeCsv(val: string, delimiter = ';') {
   const needsQuotes = val.includes(delimiter) || val.includes('"') || /\r?\n/.test(val)
   const escaped = val.replace(/"/g, '""')
   return needsQuotes ? `"${escaped}"` : escaped
 }
 
+// Compose a UTF-8 CSV including BOM so Excel handles umlauts correctly.
 function toCsv(data: Record<string, string>[], delimiter = ';') {
   const headerLine = headers.join(delimiter)
   const lines = data.map((r) => headers.map((h) => escapeCsv(r[h] ?? '', delimiter)).join(delimiter))
   return '\uFEFF' + [headerLine, ...lines].join('\r\n')
 }
 
+// Generate a CSV download for the current registration.
 function downloadCsv() {
   const csv = toCsv([row.value], ';')
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
@@ -118,6 +127,7 @@ function downloadCsv() {
   URL.revokeObjectURL(url)
 }
 
+// Convert the summary card into a printable PDF snapshot.
 function downloadPdf() {
   const doc = new jsPDF({ unit: 'pt', format: 'a4' })
   const marginX = 48
@@ -161,6 +171,7 @@ function downloadPdf() {
   doc.save(filename)
 }
 
+// Optional mail workflow stub that could call a backend to notify organisers.
 async function finalizeAndSendEmail() {
   if (sending.value) {
     return
@@ -232,8 +243,10 @@ async function finalizeAndSendEmail() {
 </script>
 
 <template>
+  <!-- Final step: provide export options and optional confirmation workflow -->
   <OnyxHeadline is="h2">Download</OnyxHeadline>
 
+  <!-- Status banner informs whether the submission made it to storage -->
   <OnyxCard class="status-card">
     <template #title>Anmeldestatus</template>
     <p v-if="isSubmitted">Ihre Anmeldung wurde gespeichert und kann jetzt exportiert werden.</p>
@@ -242,6 +255,7 @@ async function finalizeAndSendEmail() {
     </p>
   </OnyxCard>
 
+  <!-- Compact table showing the values that will be exported -->
   <OnyxCard class="preview-card">
     <template #title>Datenvorschau</template>
     <table class="preview-table">
@@ -254,6 +268,7 @@ async function finalizeAndSendEmail() {
     </table>
   </OnyxCard>
 
+  <!-- Actions for CSV/PDF export or the optional confirmation mail -->
   <div class="center-container">
     <OnyxButton
       :disabled="!canFinalize"
@@ -264,6 +279,7 @@ async function finalizeAndSendEmail() {
     <OnyxButton label="PDF herunterladen" variant="outline" @click="downloadPdf" />
   </div>
 
+  <!-- Jump back to the summary or all the way to the portal -->
   <div class="VorZurueck">
     <OnyxButton label="Vorherige Seite" type="button" @click="router.push('/5')" />
     <OnyxButton label="Zum Exkursionsportal" type="button" @click="router.push('/')" />

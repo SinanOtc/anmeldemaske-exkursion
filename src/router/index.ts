@@ -1,3 +1,4 @@
+// Central router map for public wizard pages and admin-only views.
 import { createRouter, createWebHistory } from 'vue-router'
 import AboutView from '../views/AboutView.vue'
 import ExkursionsWahlView from '@/views/ExkursionsWahlView.vue'
@@ -69,6 +70,7 @@ export const router = createRouter({
   ],
 })
 
+// Lightweight navigation guard that keeps the admin area locked unless the store indicates an active session.
 router.beforeEach((to) => {
   if (!to.meta.requiresAdmin) {
     return true

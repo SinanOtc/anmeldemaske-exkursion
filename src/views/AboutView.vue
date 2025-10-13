@@ -1,4 +1,5 @@
 <template>
+  <!-- Simple placeholder page for team information -->
   <div class="about">
     <h1>Vincenzo Scheibovic, Sinan Oturucu, Kevin Christian Albrandt</h1>
   </div>

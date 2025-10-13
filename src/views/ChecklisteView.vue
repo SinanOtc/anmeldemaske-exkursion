@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// Wizard step 4: legally-required confirmations captured as checkboxes.
 import {
   OnyxInput,
   OnyxButton,
@@ -40,6 +41,7 @@ onMounted(() => {
 })
 
 
+// Persist the checkbox answers so they survive navigation.
 function persistChecklist() {
   store.setChecklist({
     check1: check1.value,
@@ -71,10 +73,11 @@ function goBack() {
 </script>
 
 <template>
+  <!-- Step headline -->
   <OnyxHeadline is="h2">Checkliste</OnyxHeadline>
 
   <OnyxForm class="form" @submit.prevent="handleSubmit">
-    
+    <!-- Mandatory acknowledgement items mirror organisational requirements -->
     <OnyxCheckbox
       label="Ich bin mir bewusst, dass für mich Kosten bei der Exkursion anfallen, die ich selber übernehmen muss."
       v-model="check1"
@@ -117,6 +120,7 @@ function goBack() {
       value="example-value"
       required
     />
+    <!-- Continue the wizard or revisit previous declarations -->
     <div class="VorZurueck">
       <OnyxButton label="Vorherige Seite" type="button" @click="goBack" />
       <OnyxButton label="Weiter" type="submit" @click="router.push('/5')" />

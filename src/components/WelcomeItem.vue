@@ -1,4 +1,5 @@
 <template>
+  <!-- Layout helper for the default welcome screen -->
   <div class="item">
     <i>
       <slot name="icon"></slot>

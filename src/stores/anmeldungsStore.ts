@@ -1,3 +1,4 @@
+// Pinia store powering the step-by-step registration flow.
 import { defineStore } from 'pinia'
 
 import type {
@@ -10,6 +11,7 @@ import { useAdminStore } from './adminStore'
 
 const STORAGE_KEY = 'anmeldung-store'
 
+// Generate a unique identifier for the current registration draft/submission.
 function createAnmeldungId() {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
     return crypto.randomUUID()
@@ -18,6 +20,7 @@ function createAnmeldungId() {
   return `anmeldung-${Math.random().toString(36).slice(2, 10)}-${Date.now()}`
 }
 
+// Base checklist state mirrors the checkbox form and is reused after resets.
 function createDefaultChecklist(): ChecklistState {
   return {
     check1: false,
@@ -30,6 +33,7 @@ function createDefaultChecklist(): ChecklistState {
   }
 }
 
+// Creates a fresh default draft that we can rehydrate on init or after reset.
 function createDefaultState(): AnmeldungState {
   return {
     anmeldungId: createAnmeldungId(),
@@ -77,6 +81,7 @@ export const useAnmeldungStore = defineStore('anmeldung', {
       return defaults
     }
 
+    // Restore persisted drafts for returning users.
     const savedState = localStorage.getItem(STORAGE_KEY)
     if (!savedState) {
       return defaults
@@ -101,6 +106,7 @@ export const useAnmeldungStore = defineStore('anmeldung', {
   },
 
   actions: {
+    // Field-level update helpers keep the views thin.
     setExkursion(exkursion: Partial<Exkursion>) {
       this.exkursion = { ...this.exkursion, ...exkursion }
       this.touchDraft()
@@ -121,6 +127,7 @@ export const useAnmeldungStore = defineStore('anmeldung', {
       this.checklist = { ...this.checklist, ...checklist }
       this.touchDraft()
     },
+    // Resets the entire draft and clears persisted data.
     resetStore() {
       const defaults = createDefaultState()
       this.$patch(defaults)
@@ -128,15 +135,18 @@ export const useAnmeldungStore = defineStore('anmeldung', {
         localStorage.removeItem(STORAGE_KEY)
       }
     },
+    // Mark the draft dirty so the submission timestamp resets.
     touchDraft() {
       this.submittedAt = null
       this.saveToLocalStorage()
     },
+    // Ensure an ID is always set before we submit or export.
     ensureAnmeldungId() {
       if (!this.anmeldungId) {
         this.anmeldungId = createAnmeldungId()
       }
     },
+    // Finalises the registration and pushes a snapshot into the admin store.
     submitAnmeldung() {
       this.ensureAnmeldungId()
 
@@ -158,6 +168,7 @@ export const useAnmeldungStore = defineStore('anmeldung', {
       this.submittedAt = new Date().toISOString()
       this.saveToLocalStorage()
     },
+    // Persist the current draft for continuity across reloads.
     saveToLocalStorage() {
       if (typeof localStorage === 'undefined') {
         return
@@ -169,6 +180,7 @@ export const useAnmeldungStore = defineStore('anmeldung', {
   },
 
   getters: {
+    // Convenience derived values used throughout the wizard.
     fullName: (state) => `${state.persoenlich.vorname} ${state.persoenlich.nachname}`.trim(),
     isComplete: (state) =>
       Boolean(state.exkursion.id) &&

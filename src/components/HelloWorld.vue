@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// Demo component left from the Vite template.
 defineProps<{
   msg: string
 }>()
