@@ -81,8 +81,7 @@ const openAuswaertigesAmt = () => {
     <div class="page-content">
       <OnyxHeadline is="h2">Nice to Know: Internationale Reise-Checkliste</OnyxHeadline>
       <p class="intro">
-        Damit Ihre Exkursion reibungslos verläuft, haben wir die wichtigsten To-dos vor der Abreise zusammengestellt. Die
-        Liste ist bewusst kompakt gehalten und lässt sich individuell erweitern.
+        Damit Ihre Exkursion reibungslos verläuft, haben wir die wichtigsten To-dos vor der Abreise zusammengestellt.
       </p>
 
       <OnyxCard class="checklist-card">
