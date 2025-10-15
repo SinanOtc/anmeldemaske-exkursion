@@ -96,6 +96,8 @@ const steps: ControlledProgressStep[] = [
           <OnyxNavItem v-if="isAdmin" label="Adminbereich" @click="goTo('/admin')" />
           <OnyxNavItem v-else label="Verbindlich anmelden" @click="goTo('/1')" />
           <OnyxNavItem label="Nice to know" @click="goTo('/nicetoknow')" />
+          <OnyxNavItem label="Erfahrungsberichte" />
+          <OnyxNavItem label="Galerie" />
         </div>
 
         <div class="global-nav__actions">
