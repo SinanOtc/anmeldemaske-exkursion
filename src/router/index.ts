@@ -11,6 +11,8 @@ import DownloadView from '@/views/DownloadView.vue'
 import AdminView from '@/views/AdminView.vue'
 import { useAdminStore } from '@/stores/adminStore'
 import TabelleView from '@/views/TabelleView.vue'
+import ChecklisteFuerReisenView from '@/views/NicetoknowView.vue'
+import NicetoknowView from '@/views/NicetoknowView.vue'
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -36,6 +38,11 @@ export const router = createRouter({
       path: '/about',
       name: 'about',
       component: AboutView,
+    },
+    {
+      path: '/nicetoknow',
+      name: 'nicetoknow',
+      component: NicetoknowView,
     },
     {
       path: '/1',

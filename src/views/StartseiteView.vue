@@ -102,15 +102,6 @@ const logout = () => {
     </header>
   </div>
 
-  <!-- Main navigation bar with entry into the wizard -->
-  <div class="NavbarOben">
-    <OnyxNavBar logoUrl="/dhbw_heilbronn_logo.png">
-      <OnyxNavItem label="Jetzt verbindlich anmelden" @click="router.push('/1')"> </OnyxNavItem>
-      <OnyxNavItem v-if="isAdmin" label="Exkursionsverwaltung" @click="router.push('/admin')"> </OnyxNavItem>
-      <OnyxNavItem label="Erfahrungsberichte" type="button" />
-    </OnyxNavBar>
-  </div>
-
   <!-- Highlight active excursions for fast orientation -->
   <section v-if="sortedAktiveExkursionen.length" class="exkursionen">
     <OnyxHeadline is="h3">Aktive Exkursionen</OnyxHeadline>
@@ -171,10 +162,6 @@ const logout = () => {
   justify-content: flex-end;
   gap: 0.5rem;
   align-items: center;
-}
-
-.NavbarOben {
-  margin-top: 2rem;
 }
 
 .exkursionen {

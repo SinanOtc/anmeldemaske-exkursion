@@ -264,13 +264,14 @@ async function finalizeAndSendEmail() {
       </OnyxCard>
 
       <!-- Actions for CSV/PDF export or the optional confirmation mail -->
-      <div class="center-container">
-        <OnyxButton
-          :disabled="!canFinalize"
-          :icon="iconCircleCheck"
-          :label="sending ? 'Wird verarbeitet…' : 'Verbindlich anmelden'"
-          @click="finalizeAndSendEmail"
-        />
+    <div class="center-container">
+      <OnyxButton
+        :disabled="!canFinalize"
+        :icon="iconCircleCheck"
+        :label="sending ? 'Wird verarbeitet…' : 'Verbindlich anmelden'"
+        class="primary-action"
+        @click="finalizeAndSendEmail"
+      />
         <OnyxButton :icon="iconFileCsv" label="CSV herunterladen" @click="downloadCsv" />
         <OnyxButton :icon="iconFilePdf" label="PDF herunterladen" variant="outline" @click="downloadPdf" />
       </div>
@@ -310,6 +311,25 @@ async function finalizeAndSendEmail() {
 
 .center-container :deep(.onyx-button) {
   width: min(240px, 100%);
+}
+
+.primary-action :deep(.onyx-button) {
+  background: linear-gradient(135deg, #1f8a4d 0%, #2fb874 100%);
+  color: #004cff;
+  font-weight: 600;
+  border: none;
+  box-shadow: 0 14px 24px rgba(123, 255, 0, 0.28);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primary-action :deep(.onyx-button:hover:not([disabled])) {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 30px rgba(47, 184, 116, 0.35);
+}
+
+.primary-action :deep(.onyx-button:disabled) {
+  background: linear-gradient(135deg, rgba(31, 138, 77, 0.65), rgba(47, 184, 116, 0.65));
+  box-shadow: none;
 }
 
 .confirmation-card {
