@@ -3,7 +3,7 @@
     <div class="about-card">
       <p class="about-label">Erstellt von</p>
       <h1 class="about-title">
-        Vincenzo Scheibovic, Keviño Christiano Ronaldo del Albrán, Sigfried von Ottmeier
+        Vincenzo Scheibovic, Keviño Christiano Ronaldo del Albrán, Sinan Oturucu
       </h1>
       <p class="about-subtitle">DHBW Exkursionsportal · Team 6: Die Optimierer</p>
     </div>
