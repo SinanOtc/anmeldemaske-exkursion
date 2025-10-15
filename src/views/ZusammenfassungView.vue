@@ -30,110 +30,93 @@ const goToDownload = () => {
 </script>
 
 <template>
-  <div class="page">
-    <!-- Recap of all gathered information before submission -->
-    <div class="page-content">
-      <OnyxHeadline is="h2">Zusammenfassung</OnyxHeadline>
+  <!-- Recap of all gathered information before submission -->
+  <OnyxHeadline is="h2">Zusammenfassung</OnyxHeadline>
 
-      <div class="grid gap-6 md:grid-cols-2 mt-6">
-        <!-- Overview of the chosen excursion -->
-        <OnyxCard>
-          <template #title>Exkursionsdaten</template>
-          <dl class="kv">
-            <dt>Exkursionstitel</dt>
-            <dd>{{ exkursion.titel || '—' }}</dd>
-            <dt>Exkursionszeitraum</dt>
-            <dd>{{ exkursion.datum || '—' }}</dd>
-            <dt>Zielort</dt>
-            <dd>{{ exkursion.ort || '—' }}</dd>
-            <dt>Exkursions-ID</dt>
-            <dd>{{ exkursion.id || '—' }}</dd>
-          </dl>
-          <OnyxButton label="Bearbeiten" variant="ghost" class="mt-3" @click="router.push('/1')"
-            >Bearbeiten</OnyxButton
-          >
-        </OnyxCard>
+  <div class="grid gap-6 md:grid-cols-2 mt-6">
+    <!-- Overview of the chosen excursion -->
+    <OnyxCard>
+      <template #title>Exkursionsdaten</template>
+      <dl class="kv">
+        <dt>Exkursionstitel</dt>
+        <dd>{{ exkursion.titel || '—' }}</dd>
+        <dt>Exkursionszeitraum</dt>
+        <dd>{{ exkursion.datum || '—' }}</dd>
+        <dt>Zielort</dt>
+        <dd>{{ exkursion.ort || '—' }}</dd>
+        <dt>Exkursions-ID</dt>
+        <dd>{{ exkursion.id || '—' }}</dd>
+      </dl>
+      <OnyxButton label="Bearbeiten" variant="ghost" class="mt-3" @click="router.push('/1')"
+        >Bearbeiten</OnyxButton
+      >
+    </OnyxCard>
 
-        <!-- Personal details -->
-        <OnyxCard>
-          <template #title>Persönliche Angaben</template>
-          <dl class="kv">
-            <dt>Name</dt>
-            <dd>{{ persoenlich.vorname }} {{ persoenlich.nachname }}</dd>
-            <dt>Ausweisart</dt>
-            <dd>{{ persoenlich.ausweisart || '—' }}</dd>
-            <dt>Ausweisnummer</dt>
-            <dd>{{ persoenlich.ausweisnr || '—' }}</dd>
-            <dt>Handynummer</dt>
-            <dd>{{ persoenlich.handy || '—' }}</dd>
-          </dl>
-          <OnyxButton label="Bearbeiten" variant="ghost" class="mt-3" @click="router.push('/2')"
-            >Bearbeiten</OnyxButton
-          >
-        </OnyxCard>
+    <!-- Personal details -->
+    <OnyxCard>
+      <template #title>Persönliche Angaben</template>
+      <dl class="kv">
+        <dt>Name</dt>
+        <dd>{{ persoenlich.vorname }} {{ persoenlich.nachname }}</dd>
+        <dt>Ausweisart</dt>
+        <dd>{{ persoenlich.ausweisart || '—' }}</dd>
+        <dt>Ausweisnummer</dt>
+        <dd>{{ persoenlich.ausweisnr || '—' }}</dd>
+        <dt>Handynummer</dt>
+        <dd>{{ persoenlich.handy || '—' }}</dd>
+      </dl>
+      <OnyxButton label="Bearbeiten" variant="ghost" class="mt-3" @click="router.push('/2')"
+        >Bearbeiten</OnyxButton
+      >
+    </OnyxCard>
 
-        <!-- Emergency contact details -->
-        <OnyxCard>
-          <template #title>Notfallkontakt</template>
-          <dl class="kv">
-            <dt>Name des Notfallkontakts</dt>
-            <dd>{{ notfall.name || '—' }}</dd>
-            <dt>Beziehung zum Notfallkontakt</dt>
-            <dd>{{ notfall.beziehung || '—' }}</dd>
-            <dt>Nummer des Notfallkontakts</dt>
-            <dd>{{ notfall.telefon || '—' }}</dd>
-          </dl>
-          <OnyxButton label="Bearbeiten" variant="ghost" class="mt-3" @click="router.push('/3')"
-            >Bearbeiten</OnyxButton
-          >
-        </OnyxCard>
-        <OnyxCard class="md:col-span-2">
-          <template #title>Sonstige Anmerkungen</template>
+    <!-- Emergency contact details -->
+    <OnyxCard>
+      <template #title>Notfallkontakt</template>
+      <dl class="kv">
+        <dt>Name des Notfallkontakts</dt>
+        <dd>{{ notfall.name || '—' }}</dd>
+        <dt>Beziehung zum Notfallkontakt</dt>
+        <dd>{{ notfall.beziehung || '—' }}</dd>
+        <dt>Nummer des Notfallkontakts</dt>
+        <dd>{{ notfall.telefon || '—' }}</dd>
+      </dl>
+      <OnyxButton label="Bearbeiten" variant="ghost" class="mt-3" @click="router.push('/3')"
+        >Bearbeiten</OnyxButton
+      >
+    </OnyxCard>
+    <OnyxCard class="md:col-span-2">
+      <template #title>Sonstige Anmerkungen</template>
 
-          <OnyxTextarea
-            :modelValue="note"
-            label="Anmerkungen"
-            @update:modelValue="store.setNote"
-            placeholder="Hier können Sie besondere Wünsche oder Hinweise eintragen"
-            :rows="4"
-          />
-        </OnyxCard>
-      </div>
-    </div>
-
-    <!-- Navigate back to declarations or continue to the download -->
-    <div class="wizard-nav">
-      <OnyxButton
-        label="Vorherige Seite"
-        type="button"
-        :icon="iconArrowSmallLeft"
-        @click="router.push('/4')"
+      <OnyxTextarea
+        :modelValue="note"
+        label="Anmerkungen"
+        @update:modelValue="store.setNote"
+        placeholder="Hier können Sie besondere Wünsche oder Hinweise eintragen"
+        :rows="4"
       />
-      <OnyxButton
-        label="Weiter"
-        type="button"
-        :icon="iconArrowSmallRight"
-        icon-position="right"
-        @click="goToDownload"
-      />
-    </div>
+    </OnyxCard>
+  </div>
+
+  <!-- Navigate back to declarations or continue to the download -->
+  <div class="form-actions">
+    <OnyxButton
+      label="Vorherige Seite"
+      type="button"
+      :icon="iconArrowSmallLeft"
+      @click="router.push('/4')"
+    />
+    <OnyxButton
+      label="Weiter"
+      type="button"
+      :icon="iconArrowSmallRight"
+      icon-position="right"
+      @click="goToDownload"
+    />
   </div>
 </template>
 
 <style>
-.page {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.page-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
 
 /* schönes, kompaktes Key-Value-Layout */
 .kv {
@@ -154,11 +137,10 @@ const goToDownload = () => {
   padding-bottom: 1rem;
 }
 
-.wizard-nav {
+.form-actions {
   display: flex;
   gap: 1rem;
-  margin-top: auto;
-  padding-bottom: 2rem;
+  margin-top: 2rem;
   justify-content: flex-start;
 }
 </style>

@@ -278,10 +278,6 @@ if (!adminStore.isAdmin) {
       </OnyxCard>
     </div>
   </section>
-
-  <div class="admin__back-home">
-    <OnyxButton label="Zur Startseite" @click="router.push('/')" />
-  </div>
 </template>
 
 <style scoped>

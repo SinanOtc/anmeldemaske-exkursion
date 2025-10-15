@@ -60,50 +60,40 @@ function goBack() {
 </script>
 
 <template>
-  <div class="page">
-    <!-- Section headline -->
-    <OnyxHeadline is="h2">Notfallkontakt</OnyxHeadline>
+  <!-- Section headline -->
+  <OnyxHeadline is="h2">Notfallkontakt</OnyxHeadline>
 
-    <OnyxForm class="form" @submit.prevent="handleSubmit">
-      <!-- Emergency contact information -->
-      <OnyxInput label="Name des Notfallkontakts" v-model="inputNotfallkontaktName" required />
-      <OnyxInput label="Beziehung zum Teilnehmer" v-model="inputNotfallkontaktBeziehung" required />
-      <OnyxInput
-        label="Telefonnummer des Notfallkontakts"
-        v-model="inputNotfallkontaktTelefonnummer"
-        required
-      />
+  <OnyxForm class="form" @submit.prevent="handleSubmit">
+    <!-- Emergency contact information -->
+    <OnyxInput label="Name des Notfallkontakts" v-model="inputNotfallkontaktName" required />
+    <OnyxInput label="Beziehung zum Teilnehmer" v-model="inputNotfallkontaktBeziehung" required />
+    <OnyxInput
+      label="Telefonnummer des Notfallkontakts"
+      v-model="inputNotfallkontaktTelefonnummer"
+      required
+    />
 
-      <!-- Navigation between steps -->
-      <div class="wizard-nav">
-        <OnyxButton label="Vorherige Seite" type="button" :icon="iconArrowSmallLeft" @click="goBack" />
-        <OnyxButton label="Weiter" type="submit" :icon="iconArrowSmallRight" icon-position="right" />
-      </div>
-    </OnyxForm>
-  </div>
+    <!-- Navigation between steps -->
+    <div class="form-actions">
+      <OnyxButton label="Vorherige Seite" type="button" :icon="iconArrowSmallLeft" @click="goBack" />
+      <OnyxButton label="Weiter" type="submit" :icon="iconArrowSmallRight" icon-position="right" />
+    </div>
+  </OnyxForm>
 </template>
 
 <style>
-.page {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
 
 .form {
   max-width: 100%;
   display: flex;
   flex-direction: column;
   gap: var(--onyx-grid-gutter);
-  flex: 1;
 }
 
-.wizard-nav {
+.form-actions {
   display: flex;
   gap: 1rem;
-  margin-top: auto;
-  padding-bottom: 2rem;
+  margin-top: 1.5rem;
   justify-content: flex-start;
 }
 </style>

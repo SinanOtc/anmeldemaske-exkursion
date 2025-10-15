@@ -249,39 +249,35 @@ async function finalizeAndSendEmail() {
 </script>
 
 <template>
-  <div class="page">
-    <div class="page-content">
-      <OnyxCard v-if="confirmationVisible" class="confirmation-card">
-        <template #title>
-          <div class="confirmation-card__header">
-            <span class="confirmation-card__icon">✔</span>
-            <span>Anmeldung erfolgreich gespeichert</span>
-          </div>
-        </template>
-        <p class="confirmation-card__message">
-          Ihre Anmeldung wurde verbindlich abgeschlossen und wird nun zur weiteren Bearbeitung weitergeleitet.
-        </p>
-      </OnyxCard>
-
-      <!-- Actions for CSV/PDF export or the optional confirmation mail -->
-    <div class="center-container">
-      <OnyxButton
-        :disabled="!canFinalize"
-        :icon="iconCircleCheck"
-        :label="sending ? 'Wird verarbeitet…' : 'Verbindlich anmelden'"
-        class="primary-action"
-        @click="finalizeAndSendEmail"
-      />
-        <OnyxButton :icon="iconFileCsv" label="CSV herunterladen" @click="downloadCsv" />
-        <OnyxButton :icon="iconFilePdf" label="PDF herunterladen" variant="outline" @click="downloadPdf" />
+  <OnyxCard v-if="confirmationVisible" class="confirmation-card">
+    <template #title>
+      <div class="confirmation-card__header">
+        <span class="confirmation-card__icon">✔</span>
+        <span>Anmeldung erfolgreich gespeichert</span>
       </div>
-    </div>
+    </template>
+    <p class="confirmation-card__message">
+      Ihre Anmeldung wurde verbindlich abgeschlossen und wird nun zur weiteren Bearbeitung weitergeleitet.
+    </p>
+  </OnyxCard>
 
-    <!-- Jump back to the summary or all the way to the portal -->
-    <div class="wizard-nav">
-      <OnyxButton label="Vorherige Seite" :icon="iconArrowSmallLeft" type="button" @click="router.push('/5')" />
-      <OnyxButton label="Zur Startseite" :icon="iconHome" type="button" @click="router.push('/')" />
-    </div>
+  <!-- Actions for CSV/PDF export or the optional confirmation mail -->
+  <div class="center-container">
+    <OnyxButton
+      :disabled="!canFinalize"
+      :icon="iconCircleCheck"
+      :label="sending ? 'Wird verarbeitet…' : 'Verbindlich anmelden'"
+      class="primary-action"
+      @click="finalizeAndSendEmail"
+    />
+    <OnyxButton :icon="iconFileCsv" label="CSV herunterladen" @click="downloadCsv" />
+    <OnyxButton :icon="iconFilePdf" label="PDF herunterladen" variant="outline" @click="downloadPdf" />
+  </div>
+
+  <!-- Jump back to the summary or all the way to the portal -->
+  <div class="form-actions">
+    <OnyxButton label="Vorherige Seite" :icon="iconArrowSmallLeft" type="button" @click="router.push('/5')" />
+    <OnyxButton label="Zur Startseite" :icon="iconHome" type="button" @click="router.push('/')" />
   </div>
 </template>
 
@@ -303,10 +299,9 @@ async function finalizeAndSendEmail() {
 .center-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   gap: 1rem;
-  min-height: 40vh;
+  margin: 2rem 0;
 }
 
 .center-container :deep(.onyx-button) {
@@ -315,10 +310,10 @@ async function finalizeAndSendEmail() {
 
 .primary-action :deep(.onyx-button) {
   background: linear-gradient(135deg, #1f8a4d 0%, #2fb874 100%);
-  color: #004cff;
+  color: #ffffff;
   font-weight: 600;
   border: none;
-  box-shadow: 0 14px 24px rgba(123, 255, 0, 0.28);
+  box-shadow: 0 14px 24px rgba(47, 184, 116, 0.28);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -337,12 +332,11 @@ async function finalizeAndSendEmail() {
   border-left: 4px solid var(--onyx-success, #1f8a4d);
 }
 
-.wizard-nav {
+.form-actions {
   display: flex;
   gap: 1rem;
   justify-content: flex-start;
-  margin-top: auto;
-  padding-bottom: 2rem;
+  margin-top: 1.5rem;
 }
 
 .confirmation-card__header {

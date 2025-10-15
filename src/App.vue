@@ -5,6 +5,8 @@ import { computed } from 'vue'
 
 import {
   OnyxAppLayout,
+  OnyxHeadline,
+  OnyxIconButton,
   OnyxNavBar,
   OnyxNavItem,
   OnyxPageLayout,
@@ -26,6 +28,21 @@ const wizardPaths = new Set(['/1', '/2', '/3', '/4', '/5', '/6'])
 const showStepper = computed<boolean>(() => wizardPaths.has(route.path))
 
 const showGlobalNav = computed<boolean>(() => !wizardPaths.has(route.path))
+
+const pageHeading = computed(() => {
+  switch (route.path) {
+    case '/':
+      return 'Exkursionsportal'
+    case '/nicetoknow':
+      return 'Nice to know'
+    case '/about':
+      return 'Über uns'
+    case '/admin':
+      return 'Adminbereich'
+    default:
+      return ''
+  }
+})
 
 // Map the current route to the active step in the progress component.
 const activeStep = computed(() => {
@@ -69,32 +86,28 @@ const steps: ControlledProgressStep[] = [
         </OnyxSidebar>
       </template> -->
 
-      <!-- Wizard header solely for the Anmeldung-Schritte routes -->
+      <div v-if="showGlobalNav && pageHeading" class="global-heading">
+        <OnyxHeadline is="h1">{{ pageHeading }}</OnyxHeadline>
+      </div>
+
       <OnyxNavBar v-if="showGlobalNav" class="global-nav" logoUrl="/dhbw_heilbronn_logo.png">
-        <OnyxNavItem label="Startseite" @click="goTo('/')" />
-        <OnyxNavItem label="Nice to know" @click="goTo('/nicetoknow')" />
-        <OnyxNavItem label="Über uns" @click="goTo('/about')" />
-        <OnyxNavItem v-if="isAdmin" label="Adminbereich" @click="goTo('/admin')" />
-        <OnyxNavItem
-          v-else
-          label="Verbindlich anmelden"
-          @click="goTo('/1')"
-        />
-        <template #actions>
-          <OnyxNavItem :icon="iconCircleHelp" label="Hilfe" @click="goTo('/nicetoknow')" />
-          <OnyxNavItem
+        <div class="global-nav__items">
+          <OnyxNavItem label="Startseite" @click="goTo('/')" />
+          <OnyxNavItem v-if="isAdmin" label="Adminbereich" @click="goTo('/admin')" />
+          <OnyxNavItem v-else label="Verbindlich anmelden" @click="goTo('/1')" />
+          <OnyxNavItem label="Nice to know" @click="goTo('/nicetoknow')" />
+        </div>
+
+        <div class="global-nav__actions">
+          <OnyxIconButton :icon="iconCircleHelp" label="Hilfe" @click="goTo('/nicetoknow')" />
+          <OnyxIconButton
             v-if="!isAdmin"
             :icon="iconLogin"
             label="Admin Login"
-            @click="goTo('/admin')"
+            @click="goTo('/?adminLogin=1')"
           />
-          <OnyxNavItem
-            v-else
-            :icon="iconLogout"
-            label="Logout"
-            @click="handleLogout"
-          />
-        </template>
+          <OnyxIconButton v-else :icon="iconLogout" label="Logout" @click="handleLogout" />
+        </div>
       </OnyxNavBar>
 
       <header v-if="showStepper" class="app-header">
@@ -125,8 +138,37 @@ main {
   min-height: 80dvh;
 }
 
+
 .global-nav {
   margin-bottom: 1.5rem;
+  position: relative; /* neu */
+}
+
+.global-nav__items {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex: 1;
+}
+
+.global-nav__actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  position: absolute;   /* neu */
+  right: 1rem;          /* neu */
+  top: 50%;             /* neu */
+  transform: translateY(-50%); /* neu */
+}
+
+.global-heading {
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem 0 0.5rem;
+}
+
+.global-heading :deep(.onyx-headline) {
+  margin: 0;
 }
 
 .app-header {

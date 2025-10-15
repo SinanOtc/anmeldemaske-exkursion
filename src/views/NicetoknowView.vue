@@ -29,7 +29,7 @@ const checklistItems = [
   {
     title: 'Zahlungsmittel vorbereiten',
     detail:
-      'Kredit- und Debitkarten freischalten, ausreichend Bargeld bereithalten und bei Bedarf Fremdwährung wechseln.',
+      'Kredit- und Debitkarten prüfen, ausreichend Bargeld bereithalten und bei Bedarf Fremdwährung wechseln.',
   },
   {
     title: 'Notfallkontakte sichern',
@@ -99,15 +99,11 @@ const openAuswaertigesAmt = () => {
       <OnyxCard class="resources-card">
         <template #title>Offizielle Reisehinweise</template>
         <p>
-          Nutzen Sie regelmäßig die Reise- und Sicherheitshinweise des Auswärtigen Amts, um aktuelle Informationen zu
+          Nutzen Sie die Reise- und Sicherheitshinweise des Auswärtigen Amts, um aktuelle Informationen zu
           Einreise, Gesundheit und Sicherheit zu erhalten.
         </p>
         <OnyxButton label="Zum Auswärtigen Amt" variant="outline" @click="openAuswaertigesAmt" />
       </OnyxCard>
-    </div>
-
-    <div class="wizard-nav">
-      <OnyxButton label="Zur Startseite" :icon="iconHome" type="button" @click="router.push('/')" />
     </div>
   </div>
 </template>
@@ -188,9 +184,8 @@ const openAuswaertigesAmt = () => {
   }
 }
 
-.wizard-nav {
+.page-footer {
   margin-top: auto;
-  padding-bottom: 2rem;
   display: flex;
   gap: 1rem;
   justify-content: flex-start;

@@ -1,31 +1,15 @@
 <script setup lang="ts">
 // Public landing page that lists highlighted excursions and exposes admin shortcuts.
-import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import {
-  OnyxHeadline,
-  OnyxIconButton,
-  OnyxNavBar,
-  OnyxNavItem,
-  OnyxButton,
-  OnyxCard,
-  OnyxInput,
-  useToast,
-} from 'sit-onyx'
-import {
-  iconCircleHelp,
-  iconUser,
-  iconLogout,
-  iconLogin,
-  iconCircleInformation,
-  iconCircleX,
-} from '@sit-onyx/icons'
+import { OnyxHeadline, OnyxButton, OnyxCard, OnyxInput, useToast } from 'sit-onyx'
 
 import { useAdminStore } from '@/stores/adminStore'
 
-const router = useRouter()
 const toast = useToast()
+const route = useRoute()
+const router = useRouter()
 const adminStore = useAdminStore()
 adminStore.ensureHydrated()
 
@@ -63,7 +47,7 @@ const attemptLogin = async () => {
   try {
     const success = adminStore.login(adminToken.value.trim())
     if (success) {
-      toast.show({ headline: 'Godmode aktiviert', color: 'success' })
+      toast.show({ headline: 'Gommemode aktiviert trollololol', color: 'success' })
       showLoginPanel.value = false
     } else {
       toast.show({ headline: 'Versuchs nochmal', description: 'Passwort ungültig.', color: 'danger' })
@@ -79,29 +63,27 @@ const logout = () => {
   adminStore.logout()
   toast.show({ headline: 'Godmode deaktiviert', color: 'neutral' })
 }
+
+const maybeOpenLoginFromQuery = () => {
+  if (route.query.adminLogin === '1' && !isAdmin.value) {
+    openLogin()
+    const nextQuery = { ...route.query }
+    delete nextQuery.adminLogin
+    router.replace({ path: route.path, query: nextQuery })
+  }
+}
+
+onMounted(maybeOpenLoginFromQuery)
+
+watch(
+  () => route.query.adminLogin,
+  () => {
+    maybeOpenLoginFromQuery()
+  },
+)
 </script>
 
 <template>
-  <div class="Headline">
-    <OnyxHeadline is="h1">Exkursionsportal</OnyxHeadline>
-  </div>
-
-  <!-- Quick access toolbar with help, admin login or logout -->
-  <div class="portal-content">
-    <header class="portal-header">
-      <div class="portal-header__actions">
-        <OnyxIconButton :icon="iconCircleHelp" label="Hilfe" />
-        <OnyxIconButton v-if="!isAdmin" :icon="iconLogin" label="Admin Login" @click="openLogin" />
-        <OnyxIconButton
-          v-else
-          :icon="iconCircleInformation"
-          label="Adminbereich"
-        />
-        <OnyxIconButton v-if="isAdmin" :icon="iconLogout" label="Logout" @click="logout" />
-      </div>
-    </header>
-  </div>
-
   <!-- Highlight active excursions for fast orientation -->
   <section v-if="sortedAktiveExkursionen.length" class="exkursionen">
     <OnyxHeadline is="h3">Aktive Exkursionen</OnyxHeadline>
@@ -139,31 +121,6 @@ const logout = () => {
 </template>
 
 <style scoped>
-.Headline {
-  display: flex;
-  justify-content: center;
-}
-
-.portal-content {
-  display: flex;
-  float: right;
-  flex-direction: column;
-  gap: var(--onyx-grid-gutter, 1.5rem);
-}
-
-.portal-header {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-}
-
-.portal-header__actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  align-items: center;
-}
-
 .exkursionen {
   margin-top: 3rem;
   display: flex;

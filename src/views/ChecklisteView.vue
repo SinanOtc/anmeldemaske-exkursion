@@ -74,89 +74,79 @@ function goBack() {
 </script>
 
 <template>
-  <div class="page">
-    <!-- Step headline -->
-    <OnyxHeadline is="h2">Verbindliche Bestätigungen</OnyxHeadline>
+  <!-- Step headline -->
+  <OnyxHeadline is="h2">Verbindliche Bestätigungen</OnyxHeadline>
 
-    <OnyxForm class="form" @submit.prevent="handleSubmit">
-      <!-- Mandatory acknowledgement items mirror organisational requirements -->
-      <OnyxCheckbox
-        label="Ich bin mir bewusst, dass für mich Kosten bei der Exkursion anfallen, die ich selber übernehmen muss."
-        v-model="kostenSelbsttragen"
-        value="example-value"
-        required
+  <OnyxForm class="form" @submit.prevent="handleSubmit">
+    <!-- Mandatory acknowledgement items mirror organisational requirements -->
+    <OnyxCheckbox
+      label="Ich bin mir bewusst, dass für mich Kosten bei der Exkursion anfallen, die ich selber übernehmen muss."
+      v-model="kostenSelbsttragen"
+      value="example-value"
+      required
+    />
+    <OnyxCheckbox
+      label="Ich habe mich auf der Seite des Auswertigen Amts über das Reiseziel und Einreisebestimmungen informiert."
+      v-model="auswaertigesAmtInformiert"
+      value="example-value"
+      required
+    />
+    <OnyxCheckbox
+      label="Ich werde mich an die länderspezifischen Vorschriften und Verhaltenskodizes halten."
+      v-model="verhaltenskodexEinhaltung"
+      value="example-value"
+      required
+    />
+    <OnyxCheckbox
+      label="Meine Persönlichen Daten dürfen vertraulich an die Partner vor Ort weitergegeben werden."
+      v-model="datenweitergabeErlaubt"
+      value="example-value"
+      required
+    />
+    <OnyxCheckbox
+      label="Ich werde zum Zeitpunkt der Reise eine eigene Auslandskrankenversicherung und Haftpflichtversicherung haben."
+      v-model="versicherungVorhanden"
+      value="example-value"
+      required
+    />
+    <OnyxCheckbox
+      label="Ich bin einverstanden einer Signal Gruppe für die Kommunikation vor Ort beizutreten."
+      v-model="signalGruppeBeitritt"
+      value="example-value"
+      required
+    />
+    <OnyxCheckbox
+      label="Ich werde mich selbstständig um meine An- und Abreise kümmern (Flüge, Transfer, Visa, …) und informiere nach Freigabe und Buchung das Sekretariat über die Daten der An- und Abreise (Zeiten An- und Abflug, Flugnummer, …)."
+      v-model="reiseEigenverantwortlich"
+      value="example-value"
+      required
+    />
+    <!-- Continue the wizard or revisit previous declarations -->
+    <div class="form-actions">
+      <OnyxButton label="Vorherige Seite" type="button" :icon="iconArrowSmallLeft" @click="goBack" />
+      <OnyxButton
+        label="Weiter"
+        type="submit"
+        :icon="iconArrowSmallRight"
+        icon-position="right"
       />
-      <OnyxCheckbox
-        label="Ich habe mich auf der Seite des Auswertigen Amts über das Reiseziel und Einreisebestimmungen informiert."
-        v-model="auswaertigesAmtInformiert"
-        value="example-value"
-        required
-      />
-      <OnyxCheckbox
-        label="Ich werde mich an die länderspezifischen Vorschriften und Verhaltenskodizes halten."
-        v-model="verhaltenskodexEinhaltung"
-        value="example-value"
-        required
-      />
-      <OnyxCheckbox
-        label="Meine Persönlichen Daten dürfen vertraulich an die Partner vor Ort weitergegeben werden."
-        v-model="datenweitergabeErlaubt"
-        value="example-value"
-        required
-      />
-      <OnyxCheckbox
-        label="Ich werde zum Zeitpunkt der Reise eine eigene Auslandskrankenversicherung und Haftpflichtversicherung haben."
-        v-model="versicherungVorhanden"
-        value="example-value"
-        required
-      />
-      <OnyxCheckbox
-        label="Ich bin einverstanden einer Signal Gruppe für die Kommunikation vor Ort beizutreten."
-        v-model="signalGruppeBeitritt"
-        value="example-value"
-        required
-      />
-      <OnyxCheckbox
-        label="Ich werde mich selbstständig um meine An- und Abreise kümmern (Flüge, Transfer, Visa, …) und informiere nach Freigabe und Buchung das Sekretariat über die Daten der An- und Abreise (Zeiten An- und Abflug, Flugnummer, …)."
-        v-model="reiseEigenverantwortlich"
-        value="example-value"
-        required
-      />
-      <!-- Continue the wizard or revisit previous declarations -->
-      <div class="wizard-nav">
-        <OnyxButton label="Vorherige Seite" type="button" :icon="iconArrowSmallLeft" @click="goBack" />
-        <OnyxButton
-          label="Weiter"
-          type="submit"
-          :icon="iconArrowSmallRight"
-          icon-position="right"
-        />
-      </div>
-    </OnyxForm>
-  </div>
+    </div>
+  </OnyxForm>
 </template>
 
 <style>
-.page {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
 
 .form {
   max-width: 100%;
   display: flex;
   flex-direction: column;
   gap: var(--onyx-grid-gutter);
-  flex: 1;
 }
 
-.wizard-nav {
+.form-actions {
   display: flex;
   gap: 1rem;
-  margin-top: auto;
-  padding-bottom: 2rem;
+  margin-top: 1.5rem;
   justify-content: flex-start;
 }
 </style>

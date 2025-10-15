@@ -81,45 +81,36 @@ const handleSubmit = () => {
 }
 </script>
 <template>
-  <div class="page">
-    <!-- Provide both a dropdown of known excursions and a manual fallback -->
-    <OnyxHeadline is="h2">Exkursions-ID eingeben</OnyxHeadline>
-    <OnyxForm class="form" @submit.prevent="handleSubmit">
-      <OnyxSelect
-        v-if="exkursionOptions.length"
-        v-model="selectedExkursionId"
-        label="Exkursion auswählen"
-        listLabel="Exkursionen"
-        placeholder="Bitte auswählen"
-        :options="exkursionOptions"
-      />
+  <!-- Provide both a dropdown of known excursions and a manual fallback -->
+  <OnyxHeadline is="h2">Exkursions-ID eingeben</OnyxHeadline>
+  <OnyxForm class="form" @submit.prevent="handleSubmit">
+    <OnyxSelect
+      v-if="exkursionOptions.length"
+      v-model="selectedExkursionId"
+      label="Exkursion auswählen"
+      listLabel="Exkursionen"
+      placeholder="Bitte auswählen"
+      :options="exkursionOptions"
+    />
 
-      <p v-if="selectedExkursion" class="exkursion-hinweis">
-        {{ selectedExkursion.titel }} – {{ selectedExkursion.ort }} ({{ selectedExkursion.datum || 'Zeitraum offen' }})
-      </p>
+    <p v-if="selectedExkursion" class="exkursion-hinweis">
+      {{ selectedExkursion.titel }} – {{ selectedExkursion.ort }} ({{ selectedExkursion.datum || 'Zeitraum offen' }})
+    </p>
 
-      <div class="wizard-nav">
-        <OnyxButton label="Zur Startseite" type="button" :icon="iconHome" @click="router.push('/')" />
-        <OnyxButton label="Weiter" type="submit" :icon="iconArrowSmallRight" icon-position="right" />
-      </div>
-    </OnyxForm>
-  </div>
+    <div class="form-actions">
+      <OnyxButton label="Zur Startseite" type="button" :icon="iconHome" @click="router.push('/')" />
+      <OnyxButton label="Weiter" type="submit" :icon="iconArrowSmallRight" icon-position="right" />
+    </div>
+  </OnyxForm>
 </template>
 
 <style scoped>
-.page {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
 
 .form {
   max-width: 100%;
   display: flex;
   flex-direction: column;
   gap: var(--onyx-grid-gutter);
-  flex: 1;
 }
 
 .exkursion-hinweis {
@@ -128,11 +119,10 @@ const handleSubmit = () => {
   opacity: 0.85;
 }
 
-.wizard-nav {
+.form-actions {
   display: flex;
   gap: 1rem;
-  margin-top: auto;
-  padding-bottom: 2rem;
+  margin-top: 1.5rem;
   justify-content: flex-start;
 }
 </style>
