@@ -27,7 +27,7 @@ const steps: ControlledProgressStep[] = [
   { label: 'Exkursionswahl' },
   { label: 'Persönliche Daten' },
   { label: 'Notfallkontakt' },
-  { label: 'Checkliste' },
+  { label: 'Verbindliche Bestätigungen' },
   { label: 'Zusammenfassung' },
   { label: 'Download' },
 ]

@@ -12,18 +12,19 @@ import {
   type SelectOption,
 } from 'sit-onyx'
 import { ref, onMounted } from 'vue'
+import { iconArrowSmallLeft, iconArrowSmallRight } from '@sit-onyx/icons'
 import { useRouter } from 'vue-router'
 import { useAnmeldungStore } from '@/stores/anmeldungsStore'
 
 const inputValue = ref<string>('')
 
-const check1 = ref(false)
-const check2 = ref(false)
-const check3 = ref(false)
-const check4 = ref(false)
-const check5 = ref(false)
-const check6 = ref(false)
-const check7 = ref(false)
+const kostenSelbsttragen = ref(false)
+const auswaertigesAmtInformiert = ref(false)
+const verhaltenskodexEinhaltung = ref(false)
+const datenweitergabeErlaubt = ref(false)
+const versicherungVorhanden = ref(false)
+const signalGruppeBeitritt = ref(false)
+const reiseEigenverantwortlich = ref(false)
 
 const router = useRouter()
 const toast = useToast()
@@ -31,32 +32,32 @@ const store = useAnmeldungStore()
 
 onMounted(() => {
   // Vorbelegen aus Store (inkl. localStorage-Restore)
-  check1.value = store.checklist.check1
-  check2.value = store.checklist.check2
-  check3.value = store.checklist.check3
-  check4.value = store.checklist.check4
-  check5.value = store.checklist.check5
-  check6.value = store.checklist.check6
-  check7.value = store.checklist.check7
+  kostenSelbsttragen.value = store.bestaetigungen.kostenSelbsttragen
+  auswaertigesAmtInformiert.value = store.bestaetigungen.auswaertigesAmtInformiert
+  verhaltenskodexEinhaltung.value = store.bestaetigungen.verhaltenskodexEinhaltung
+  datenweitergabeErlaubt.value = store.bestaetigungen.datenweitergabeErlaubt
+  versicherungVorhanden.value = store.bestaetigungen.versicherungVorhanden
+  signalGruppeBeitritt.value = store.bestaetigungen.signalGruppeBeitritt
+  reiseEigenverantwortlich.value = store.bestaetigungen.reiseEigenverantwortlich
 })
 
 
 // Persist the checkbox answers so they survive navigation.
-function persistChecklist() {
-  store.setChecklist({
-    check1: check1.value,
-    check2: check2.value,
-    check3: check3.value,
-    check4: check4.value,
-    check5: check5.value,
-    check6: check6.value,
-    check7: check7.value,
+function persistBestaetigungen() {
+  store.setBestaetigungen({
+    kostenSelbsttragen: kostenSelbsttragen.value,
+    auswaertigesAmtInformiert: auswaertigesAmtInformiert.value,
+    verhaltenskodexEinhaltung: verhaltenskodexEinhaltung.value,
+    datenweitergabeErlaubt: datenweitergabeErlaubt.value,
+    versicherungVorhanden: versicherungVorhanden.value,
+    signalGruppeBeitritt: signalGruppeBeitritt.value,
+    reiseEigenverantwortlich: reiseEigenverantwortlich.value,
   })
 }
 
 const handleSubmit = () => {
   // In Store speichern
-  persistChecklist()
+  persistBestaetigungen()
   toast.show({
     headline: 'Form submitted',
     description: inputValue.value,
@@ -67,72 +68,95 @@ const handleSubmit = () => {
 }
 
 function goBack() {
-  persistChecklist()
+  persistBestaetigungen()
   router.push('/3')
 }
 </script>
 
 <template>
-  <!-- Step headline -->
-  <OnyxHeadline is="h2">Checkliste</OnyxHeadline>
+  <div class="page">
+    <!-- Step headline -->
+    <OnyxHeadline is="h2">Verbindliche Bestätigungen</OnyxHeadline>
 
-  <OnyxForm class="form" @submit.prevent="handleSubmit">
-    <!-- Mandatory acknowledgement items mirror organisational requirements -->
-    <OnyxCheckbox
-      label="Ich bin mir bewusst, dass für mich Kosten bei der Exkursion anfallen, die ich selber übernehmen muss."
-      v-model="check1"
-      value="example-value"
-      required
-    />
-    <OnyxCheckbox
-      label="Ich habe mich auf der Seite des Auswertigen Amts über das Reiseziel und Einreisebestimmungen informiert."
-      v-model="check2"
-      value="example-value"
-      required
-    />
-    <OnyxCheckbox
-      label="Ich werde mich an die länderspezifischen Vorschriften und Verhaltenskodizes halten."
-      v-model="check3"
-      value="example-value"
-      required
-    />
-    <OnyxCheckbox
-      label="Meine Persönlichen Daten dürfen vertraulich an die Partner vor Ort weitergegeben werden."
-      v-model="check4"
-      value="example-value"
-      required
-    />
-    <OnyxCheckbox
-      label="Ich werde zum Zeitpunkt der Reise eine eigene Auslandskrankenversicherung und Haftpflichtversicherung haben."
-      v-model="check5"
-      value="example-value"
-      required
-    />
-    <OnyxCheckbox
-      label="Ich bin einverstanden einer Signal Gruppe für die Kommunikation vor Ort beizutreten."
-      v-model="check6"
-      value="example-value"
-      required
-    />
-    <OnyxCheckbox
-      label="Ich werde mich selbstständig um meine An- und Abreise kümmern (Flüge, Transfer, Visa, …) und informiere nach Freigabe und Buchung das Sekretariat über die Daten der An- und Abreise (Zeiten An- und Abflug, Flugnummer, …)."
-      v-model="check7"
-      value="example-value"
-      required
-    />
-    <!-- Continue the wizard or revisit previous declarations -->
-    <div class="VorZurueck">
-      <OnyxButton label="Vorherige Seite" type="button" @click="goBack" />
-      <OnyxButton label="Weiter" type="submit" @click="router.push('/5')" />
-    </div>
-  </OnyxForm>
+    <OnyxForm class="form" @submit.prevent="handleSubmit">
+      <!-- Mandatory acknowledgement items mirror organisational requirements -->
+      <OnyxCheckbox
+        label="Ich bin mir bewusst, dass für mich Kosten bei der Exkursion anfallen, die ich selber übernehmen muss."
+        v-model="kostenSelbsttragen"
+        value="example-value"
+        required
+      />
+      <OnyxCheckbox
+        label="Ich habe mich auf der Seite des Auswertigen Amts über das Reiseziel und Einreisebestimmungen informiert."
+        v-model="auswaertigesAmtInformiert"
+        value="example-value"
+        required
+      />
+      <OnyxCheckbox
+        label="Ich werde mich an die länderspezifischen Vorschriften und Verhaltenskodizes halten."
+        v-model="verhaltenskodexEinhaltung"
+        value="example-value"
+        required
+      />
+      <OnyxCheckbox
+        label="Meine Persönlichen Daten dürfen vertraulich an die Partner vor Ort weitergegeben werden."
+        v-model="datenweitergabeErlaubt"
+        value="example-value"
+        required
+      />
+      <OnyxCheckbox
+        label="Ich werde zum Zeitpunkt der Reise eine eigene Auslandskrankenversicherung und Haftpflichtversicherung haben."
+        v-model="versicherungVorhanden"
+        value="example-value"
+        required
+      />
+      <OnyxCheckbox
+        label="Ich bin einverstanden einer Signal Gruppe für die Kommunikation vor Ort beizutreten."
+        v-model="signalGruppeBeitritt"
+        value="example-value"
+        required
+      />
+      <OnyxCheckbox
+        label="Ich werde mich selbstständig um meine An- und Abreise kümmern (Flüge, Transfer, Visa, …) und informiere nach Freigabe und Buchung das Sekretariat über die Daten der An- und Abreise (Zeiten An- und Abflug, Flugnummer, …)."
+        v-model="reiseEigenverantwortlich"
+        value="example-value"
+        required
+      />
+      <!-- Continue the wizard or revisit previous declarations -->
+      <div class="wizard-nav">
+        <OnyxButton label="Vorherige Seite" type="button" :icon="iconArrowSmallLeft" @click="goBack" />
+        <OnyxButton
+          label="Weiter"
+          type="submit"
+          :icon="iconArrowSmallRight"
+          icon-position="right"
+        />
+      </div>
+    </OnyxForm>
+  </div>
 </template>
 
 <style>
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
 .form {
   max-width: 100%;
   display: flex;
   flex-direction: column;
   gap: var(--onyx-grid-gutter);
+  flex: 1;
+}
+
+.wizard-nav {
+  display: flex;
+  gap: 1rem;
+  margin-top: auto;
+  padding-bottom: 2rem;
+  justify-content: flex-start;
 }
 </style>

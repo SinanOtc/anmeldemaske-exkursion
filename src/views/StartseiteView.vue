@@ -16,7 +16,8 @@ import {
 import {
   iconCircleHelp,
   iconUser,
-  iconClipboardLock,
+  iconLogout,
+  iconLogin,
   iconCircleInformation,
   iconCircleX,
 } from '@sit-onyx/icons'
@@ -54,7 +55,7 @@ const closeLogin = () => {
 
 const attemptLogin = async () => {
   if (!adminToken.value.trim()) {
-    toast.show({ headline: 'Token erforderlich', description: 'Bitte Admin-Token eingeben.', color: 'warning' })
+    toast.show({ headline: 'Passwort erforderlich', description: 'Bitte Admin-Passwort eingeben.', color: 'warning' })
     return
   }
 
@@ -62,11 +63,10 @@ const attemptLogin = async () => {
   try {
     const success = adminStore.login(adminToken.value.trim())
     if (success) {
-      toast.show({ headline: 'Erfolgreich angemeldet', color: 'success' })
+      toast.show({ headline: 'Godmode aktiviert', color: 'success' })
       showLoginPanel.value = false
-      router.push('/admin')
     } else {
-      toast.show({ headline: 'Login fehlgeschlagen', description: 'Token ungültig.', color: 'danger' })
+      toast.show({ headline: 'Versuchs nochmal', description: 'Passwort ungültig.', color: 'danger' })
     }
   } finally {
     loginBusy.value = false
@@ -77,7 +77,7 @@ const attemptLogin = async () => {
 // Drop any admin state and revert to the public view.
 const logout = () => {
   adminStore.logout()
-  toast.show({ headline: 'Abgemeldet', color: 'neutral' })
+  toast.show({ headline: 'Godmode deaktiviert', color: 'neutral' })
 }
 </script>
 
@@ -91,24 +91,22 @@ const logout = () => {
     <header class="portal-header">
       <div class="portal-header__actions">
         <OnyxIconButton :icon="iconCircleHelp" label="Hilfe" />
-        <OnyxIconButton v-if="!isAdmin" :icon="iconClipboardLock" label="Admin Login" @click="openLogin" />
+        <OnyxIconButton v-if="!isAdmin" :icon="iconLogin" label="Admin Login" @click="openLogin" />
         <OnyxIconButton
           v-else
           :icon="iconCircleInformation"
           label="Adminbereich"
-          @click="router.push('/admin')"
         />
-        <OnyxIconButton v-if="isAdmin" :icon="iconCircleX" label="Logout" @click="logout" />
-        <OnyxIconButton :icon="iconUser" label="Profil" />
+        <OnyxIconButton v-if="isAdmin" :icon="iconLogout" label="Logout" @click="logout" />
       </div>
     </header>
   </div>
 
   <!-- Main navigation bar with entry into the wizard -->
   <div class="NavbarOben">
-    <OnyxNavBar appName="Exkursionsportal der DHBW" logoUrl="/kevin.JPG">
-      <OnyxNavItem label="Daten bearbeiten" @click="router.push('/1')"> </OnyxNavItem>
-      <OnyxNavItem v-if="isAdmin" label="Exkursion anlegen" @click="router.push('/admin')"> </OnyxNavItem>
+    <OnyxNavBar logoUrl="/dhbw_heilbronn_logo.png">
+      <OnyxNavItem label="Jetzt verbindlich anmelden" @click="router.push('/1')"> </OnyxNavItem>
+      <OnyxNavItem v-if="isAdmin" label="Exkursionsverwaltung" @click="router.push('/admin')"> </OnyxNavItem>
       <OnyxNavItem label="Erfahrungsberichte" type="button" />
     </OnyxNavBar>
   </div>

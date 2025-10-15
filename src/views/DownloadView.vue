@@ -1,8 +1,9 @@
 <script setup lang="ts">
-// Wizard step 6: provide downloadable copies of the registration and trigger the mail workflow.
+// Wizard step 6: provide downloadable copies der Anmeldung; Mail-Versand aktuell deaktiviert.
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { OnyxButton, OnyxCard, OnyxHeadline, useToast } from 'sit-onyx'
+import { iconFileCsv, iconFilePdf, iconCircleCheck, iconHome, iconArrowSmallLeft } from "@sit-onyx/icons"
 import jsPDF from 'jspdf'
 
 import { useAnmeldungStore } from '@/stores/anmeldungsStore'
@@ -12,6 +13,7 @@ const router = useRouter()
 const toast = useToast()
 
 const sending = ref(false)
+const confirmationVisible = ref(false) // Persists success banner once submission is confirmed.
 
 // Column order shared between CSV export and PDF rendering.
 const headers = [
@@ -171,7 +173,7 @@ function downloadPdf() {
   doc.save(filename)
 }
 
-// Optional mail workflow stub that could call a backend to notify organisers.
+// Optional Mail-Workflow vorübergehend deaktiviert; der Button bestätigt aktuell nur die lokale Anmeldung.
 async function finalizeAndSendEmail() {
   if (sending.value) {
     return
@@ -202,6 +204,15 @@ async function finalizeAndSendEmail() {
       }
     }
 
+    confirmationVisible.value = true
+    toast.show({
+      headline: 'Anmeldung bestätigt',
+      description: 'Ihre Anmeldung wurde verbindlich gespeichert.',
+      color: 'success',
+    })
+
+    /*
+    // Versand der Bestätigungsmail vorübergehend deaktiviert.
     const response = await fetch('/api/anmeldungen/bestaetigung', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -223,16 +234,11 @@ async function finalizeAndSendEmail() {
       })
       return
     }
-
-    toast.show({
-      headline: 'Anmeldung bestätigt',
-      description: 'Sie erhalten in Kürze eine Bestätigung per E-Mail.',
-      color: 'success',
-    })
+    */
   } catch (error) {
-    console.error('Bestätigungsmail konnte nicht gesendet werden.', error)
+    console.error('Anmeldung konnte nicht finalisiert werden.', error)
     toast.show({
-      headline: 'Versand fehlgeschlagen',
+      headline: 'Vorgang fehlgeschlagen',
       description: 'Bitte versuchen Sie es später erneut.',
       color: 'danger',
     })
@@ -243,50 +249,56 @@ async function finalizeAndSendEmail() {
 </script>
 
 <template>
-  <!-- Final step: provide export options and optional confirmation workflow -->
-  <OnyxHeadline is="h2">Download</OnyxHeadline>
+  <div class="page">
+    <div class="page-content">
+      <OnyxCard v-if="confirmationVisible" class="confirmation-card">
+        <template #title>
+          <div class="confirmation-card__header">
+            <span class="confirmation-card__icon">✔</span>
+            <span>Anmeldung erfolgreich gespeichert</span>
+          </div>
+        </template>
+        <p class="confirmation-card__message">
+          Ihre Anmeldung wurde verbindlich abgeschlossen und wird nun zur weiteren Bearbeitung weitergeleitet.
+        </p>
+      </OnyxCard>
 
-  <!-- Status banner informs whether the submission made it to storage -->
-  <OnyxCard class="status-card">
-    <template #title>Anmeldestatus</template>
-    <p v-if="isSubmitted">Ihre Anmeldung wurde gespeichert und kann jetzt exportiert werden.</p>
-    <p v-else>
-      Die Anmeldung ist noch unvollständig. Bitte gehen Sie zurück und prüfen Sie Ihre Eingaben.
-    </p>
-  </OnyxCard>
+      <!-- Actions for CSV/PDF export or the optional confirmation mail -->
+      <div class="center-container">
+        <OnyxButton
+          :disabled="!canFinalize"
+          :icon="iconCircleCheck"
+          :label="sending ? 'Wird verarbeitet…' : 'Verbindlich anmelden'"
+          @click="finalizeAndSendEmail"
+        />
+        <OnyxButton :icon="iconFileCsv" label="CSV herunterladen" @click="downloadCsv" />
+        <OnyxButton :icon="iconFilePdf" label="PDF herunterladen" variant="outline" @click="downloadPdf" />
+      </div>
+    </div>
 
-  <!-- Compact table showing the values that will be exported -->
-  <OnyxCard class="preview-card">
-    <template #title>Datenvorschau</template>
-    <table class="preview-table">
-      <tbody>
-        <tr v-for="field in previewFields" :key="field.key">
-          <th scope="row">{{ field.label }}</th>
-          <td>{{ field.value }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </OnyxCard>
-
-  <!-- Actions for CSV/PDF export or the optional confirmation mail -->
-  <div class="center-container">
-    <OnyxButton
-      :disabled="!canFinalize"
-      :label="sending ? 'Wird gesendet…' : 'Jetzt verbindlich anmelden'"
-      @click="finalizeAndSendEmail"
-    />
-    <OnyxButton label="CSV herunterladen" @click="downloadCsv" />
-    <OnyxButton label="PDF herunterladen" variant="outline" @click="downloadPdf" />
-  </div>
-
-  <!-- Jump back to the summary or all the way to the portal -->
-  <div class="VorZurueck">
-    <OnyxButton label="Vorherige Seite" type="button" @click="router.push('/5')" />
-    <OnyxButton label="Zum Exkursionsportal" type="button" @click="router.push('/')" />
+    <!-- Jump back to the summary or all the way to the portal -->
+    <div class="wizard-nav">
+      <OnyxButton label="Vorherige Seite" :icon="iconArrowSmallLeft" type="button" @click="router.push('/5')" />
+      <OnyxButton label="Zur Startseite" :icon="iconHome" type="button" @click="router.push('/')" />
+    </div>
   </div>
 </template>
 
 <style scoped>
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.page-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
 .center-container {
   display: flex;
   flex-direction: column;
@@ -300,37 +312,44 @@ async function finalizeAndSendEmail() {
   width: min(240px, 100%);
 }
 
-.status-card {
+.confirmation-card {
   margin-bottom: 2rem;
+  border-left: 4px solid var(--onyx-success, #1f8a4d);
 }
 
-.preview-card {
-  margin-bottom: 2rem;
+.wizard-nav {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-start;
+  margin-top: auto;
+  padding-bottom: 2rem;
 }
 
-.preview-table {
-  width: 100%;
-  border-collapse: collapse;
+.confirmation-card__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
-.preview-table tr {
-  border-bottom: 1px solid var(--onyx-outline-variant);
+.confirmation-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(31, 138, 77, 0.15);
+  color: var(--onyx-success, #1f8a4d);
+  font-size: 1.25rem;
 }
 
-.preview-table tr:last-child {
-  border-bottom: none;
-}
-
-.preview-table th,
-.preview-table td {
-  text-align: left;
-  padding: 0.75rem 0;
-}
-
-.preview-table th {
+.confirmation-card__message {
+  margin: 0;
+  font-size: 1.05rem;
   font-weight: 600;
-  width: 45%;
-  padding-right: 1rem;
-  opacity: 0.8;
+  line-height: 1.6;
 }
 </style>

@@ -1,12 +1,7 @@
 // Pinia store that backs the admin dashboard with persistence, auth and CSV exports.
 import { defineStore } from 'pinia'
 
-import type {
-  ChecklistState,
-  Exkursion,
-  NotfallKontakt,
-  Persoenlich,
-} from '@/types/anmeldung'
+import type { BestaetigungenState, Exkursion, NotfallKontakt, Persoenlich } from '@/types/anmeldung'
 
 const AUTH_STORAGE_KEY = 'admin-auth'
 const DATA_STORAGE_KEY = 'admin-data'
@@ -31,7 +26,7 @@ export interface AdminTeilnehmer {
   persoenlich: Persoenlich
   notfall: NotfallKontakt
   note: string
-  checklist: ChecklistState
+  bestaetigungen: BestaetigungenState
   status: AdminTeilnehmerStatus
   submittedAt: string
   updatedAt: string
@@ -73,6 +68,45 @@ function sanitizeExkursion(payload: AdminExkursion): AdminExkursion {
   }
 
   return cleaned
+}
+
+type LegacyChecklist = Partial<{
+  check1: boolean
+  check2: boolean
+  check3: boolean
+  check4: boolean
+  check5: boolean
+  check6: boolean
+  check7: boolean
+}>
+
+const defaultBestaetigungen: BestaetigungenState = {
+  kostenSelbsttragen: false,
+  auswaertigesAmtInformiert: false,
+  verhaltenskodexEinhaltung: false,
+  datenweitergabeErlaubt: false,
+  versicherungVorhanden: false,
+  signalGruppeBeitritt: false,
+  reiseEigenverantwortlich: false,
+}
+
+function normalizeBestaetigungen(raw?: Partial<BestaetigungenState> | LegacyChecklist | null): BestaetigungenState {
+  const source = (raw ?? {}) as Partial<BestaetigungenState> & LegacyChecklist
+  return {
+    kostenSelbsttragen: source.kostenSelbsttragen ?? source.check1 ?? defaultBestaetigungen.kostenSelbsttragen,
+    auswaertigesAmtInformiert:
+      source.auswaertigesAmtInformiert ?? source.check2 ?? defaultBestaetigungen.auswaertigesAmtInformiert,
+    verhaltenskodexEinhaltung:
+      source.verhaltenskodexEinhaltung ?? source.check3 ?? defaultBestaetigungen.verhaltenskodexEinhaltung,
+    datenweitergabeErlaubt:
+      source.datenweitergabeErlaubt ?? source.check4 ?? defaultBestaetigungen.datenweitergabeErlaubt,
+    versicherungVorhanden:
+      source.versicherungVorhanden ?? source.check5 ?? defaultBestaetigungen.versicherungVorhanden,
+    signalGruppeBeitritt:
+      source.signalGruppeBeitritt ?? source.check6 ?? defaultBestaetigungen.signalGruppeBeitritt,
+    reiseEigenverantwortlich:
+      source.reiseEigenverantwortlich ?? source.check7 ?? defaultBestaetigungen.reiseEigenverantwortlich,
+  }
 }
 
 export const useAdminStore = defineStore('admin', {
@@ -127,12 +161,18 @@ export const useAdminStore = defineStore('admin', {
               }))
             : []
           this.teilnehmer = Array.isArray(parsed.teilnehmer)
-            ? parsed.teilnehmer.map((teilnehmer) => ({
-                ...teilnehmer,
-                status: teilnehmer?.status ?? 'eingegangen',
-                submittedAt: teilnehmer?.submittedAt ?? nowIso(),
-                updatedAt: teilnehmer?.updatedAt ?? nowIso(),
-              }))
+            ? parsed.teilnehmer.map((teilnehmer) => {
+                const { checklist, bestaetigungen, ...rest } = teilnehmer as Partial<
+                  AdminTeilnehmer & { checklist: LegacyChecklist }
+                >
+                return {
+                  ...rest,
+                  bestaetigungen: normalizeBestaetigungen(bestaetigungen ?? checklist ?? null),
+                  status: rest.status ?? 'eingegangen',
+                  submittedAt: rest.submittedAt ?? nowIso(),
+                  updatedAt: rest.updatedAt ?? nowIso(),
+                } as AdminTeilnehmer
+              })
             : []
         }
       } catch (err) {
@@ -269,9 +309,12 @@ export const useAdminStore = defineStore('admin', {
       this.ensureHydrated()
 
       const now = nowIso()
+      const { bestaetigungen, checklist, ...rest } = payload as typeof payload & { checklist?: LegacyChecklist }
+      const legacyChecklist = checklist ?? null
       const index = this.teilnehmer.findIndex((entry) => entry.id === payload.id)
       const base: AdminTeilnehmer = {
-        ...payload,
+        ...rest,
+        bestaetigungen: normalizeBestaetigungen(bestaetigungen ?? legacyChecklist),
         exkursionSnapshot: payload.exkursionSnapshot ?? this.exkursionById(payload.exkursionId) ?? undefined,
         status: payload.status ?? 'eingegangen',
         submittedAt: payload.submittedAt ?? now,

@@ -40,13 +40,13 @@ export interface NotfallKontakt {
   telefon: string
 }
 
-// Checklist answers confirm the mandatory declarations.
-export interface ChecklistState {
-  check1: boolean
-  check2: boolean
-  check3: boolean
-  check4: boolean
-  check5: boolean
-  check6: boolean
-  check7: boolean
+// Mandatory confirmations participants must accept before submitting.
+export interface BestaetigungenState {
+  kostenSelbsttragen: boolean
+  auswaertigesAmtInformiert: boolean
+  verhaltenskodexEinhaltung: boolean
+  datenweitergabeErlaubt: boolean
+  versicherungVorhanden: boolean
+  signalGruppeBeitritt: boolean
+  reiseEigenverantwortlich: boolean
 }

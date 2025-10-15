@@ -1,16 +1,23 @@
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
+import { OnyxButton } from 'sit-onyx'
+import { iconHome } from '@sit-onyx/icons'
+
+const router = useRouter()
+</script>
+
 <template>
-  <!-- Simple placeholder page for team information -->
   <div class="about">
-    <h1>Vincenzo Scheibovic, Sinan Oturucu, Kevin Christian Albrandt</h1>
+    <h1>Vincenzo Scheibovic, Keviño Christiano Ronaldo del Albranada, Sigfried Ottmar</h1>
+    <OnyxButton label="Startseite" :icon="iconHome" @click="router.push('/')" />
   </div>
 </template>
 
-<style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
+<style scoped>
+.about {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-start;
 }
 </style>

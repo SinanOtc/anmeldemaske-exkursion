@@ -54,7 +54,7 @@ export const router = createRouter({
     },
     {
       path: '/4',
-      name: 'Checkliste',
+      name: 'Bestaetigungen',
       component: ChecklisteView,
     },
     {

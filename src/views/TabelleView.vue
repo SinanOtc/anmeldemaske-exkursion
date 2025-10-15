@@ -376,7 +376,6 @@ const exportFilteredCsv = () => {
                 <OnyxButton
                   label="Anmeldung löschen"
                   variant="ghost"
-                  class="button-danger"
                   @click="removeTeilnehmer(entry)"
                 />
                 <OnyxButton

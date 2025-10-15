@@ -1,12 +1,7 @@
 // Pinia store powering the step-by-step registration flow.
 import { defineStore } from 'pinia'
 
-import type {
-  ChecklistState,
-  Exkursion,
-  NotfallKontakt,
-  Persoenlich,
-} from '@/types/anmeldung'
+import type { BestaetigungenState, Exkursion, NotfallKontakt, Persoenlich } from '@/types/anmeldung'
 import { useAdminStore } from './adminStore'
 
 const STORAGE_KEY = 'anmeldung-store'
@@ -20,16 +15,49 @@ function createAnmeldungId() {
   return `anmeldung-${Math.random().toString(36).slice(2, 10)}-${Date.now()}`
 }
 
-// Base checklist state mirrors the checkbox form and is reused after resets.
-function createDefaultChecklist(): ChecklistState {
+// Default confirmations align with the consent statements in the checklist view.
+function createDefaultBestaetigungen(): BestaetigungenState {
   return {
-    check1: false,
-    check2: false,
-    check3: false,
-    check4: false,
-    check5: false,
-    check6: false,
-    check7: false,
+    kostenSelbsttragen: false,
+    auswaertigesAmtInformiert: false,
+    verhaltenskodexEinhaltung: false,
+    datenweitergabeErlaubt: false,
+    versicherungVorhanden: false,
+    signalGruppeBeitritt: false,
+    reiseEigenverantwortlich: false,
+  }
+}
+
+type LegacyChecklist = Partial<{
+  check1: boolean
+  check2: boolean
+  check3: boolean
+  check4: boolean
+  check5: boolean
+  check6: boolean
+  check7: boolean
+}>
+
+function normalizeBestaetigungen(
+  bestaetigungen?: Partial<BestaetigungenState> | null,
+  legacyChecklist?: LegacyChecklist | null,
+): BestaetigungenState {
+  const defaults = createDefaultBestaetigungen()
+  const current = (bestaetigungen ?? {}) as Partial<BestaetigungenState>
+  const legacy = (legacyChecklist ?? {}) as LegacyChecklist
+
+  return {
+    kostenSelbsttragen: current.kostenSelbsttragen ?? legacy.check1 ?? defaults.kostenSelbsttragen,
+    auswaertigesAmtInformiert:
+      current.auswaertigesAmtInformiert ?? legacy.check2 ?? defaults.auswaertigesAmtInformiert,
+    verhaltenskodexEinhaltung:
+      current.verhaltenskodexEinhaltung ?? legacy.check3 ?? defaults.verhaltenskodexEinhaltung,
+    datenweitergabeErlaubt:
+      current.datenweitergabeErlaubt ?? legacy.check4 ?? defaults.datenweitergabeErlaubt,
+    versicherungVorhanden: current.versicherungVorhanden ?? legacy.check5 ?? defaults.versicherungVorhanden,
+    signalGruppeBeitritt: current.signalGruppeBeitritt ?? legacy.check6 ?? defaults.signalGruppeBeitritt,
+    reiseEigenverantwortlich:
+      current.reiseEigenverantwortlich ?? legacy.check7 ?? defaults.reiseEigenverantwortlich,
   }
 }
 
@@ -59,7 +87,7 @@ function createDefaultState(): AnmeldungState {
       telefon: '',
     },
     note: '',
-    checklist: createDefaultChecklist(),
+    bestaetigungen: createDefaultBestaetigungen(),
   }
 }
 
@@ -70,7 +98,7 @@ export interface AnmeldungState {
   persoenlich: Persoenlich
   notfall: NotfallKontakt
   note: string
-  checklist: ChecklistState
+  bestaetigungen: BestaetigungenState
 }
 
 export const useAnmeldungStore = defineStore('anmeldung', {
@@ -88,7 +116,7 @@ export const useAnmeldungStore = defineStore('anmeldung', {
     }
 
     try {
-      const parsed = JSON.parse(savedState) as Partial<AnmeldungState>
+      const parsed = JSON.parse(savedState) as Partial<AnmeldungState> & { checklist?: LegacyChecklist }
       return {
         ...defaults,
         ...parsed,
@@ -97,7 +125,7 @@ export const useAnmeldungStore = defineStore('anmeldung', {
         exkursion: { ...defaults.exkursion, ...(parsed?.exkursion || {}) },
         persoenlich: { ...defaults.persoenlich, ...(parsed?.persoenlich || {}) },
         notfall: { ...defaults.notfall, ...(parsed?.notfall || {}) },
-        checklist: { ...defaults.checklist, ...(parsed?.checklist || {}) },
+        bestaetigungen: normalizeBestaetigungen(parsed?.bestaetigungen ?? null, parsed?.checklist ?? null),
       }
     } catch (error) {
       console.warn('AnmeldungStore konnte nicht aus dem Storage geladen werden.', error)
@@ -123,8 +151,8 @@ export const useAnmeldungStore = defineStore('anmeldung', {
       this.note = note
       this.touchDraft()
     },
-    setChecklist(checklist: Partial<ChecklistState>) {
-      this.checklist = { ...this.checklist, ...checklist }
+    setBestaetigungen(bestaetigungen: Partial<BestaetigungenState>) {
+      this.bestaetigungen = { ...this.bestaetigungen, ...bestaetigungen }
       this.touchDraft()
     },
     // Resets the entire draft and clears persisted data.
@@ -161,7 +189,7 @@ export const useAnmeldungStore = defineStore('anmeldung', {
         persoenlich: { ...this.persoenlich },
         notfall: { ...this.notfall },
         note: this.note,
-        checklist: { ...this.checklist },
+        bestaetigungen: { ...this.bestaetigungen },
         exkursionSnapshot: { ...this.exkursion },
       })
 

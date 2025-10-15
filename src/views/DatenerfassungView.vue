@@ -11,6 +11,7 @@ import {
   type SelectOption,
 } from 'sit-onyx'
 import { ref, onMounted } from 'vue'
+import { iconArrowSmallLeft, iconArrowSmallRight } from '@sit-onyx/icons'
 import { useRouter } from 'vue-router'
 import { useAnmeldungStore } from '@/stores/anmeldungsStore'
 
@@ -167,71 +168,79 @@ function goBack() {
 </script>
 
 <template>
-  <!-- Step headline keeps the wizard consistent -->
-  <OnyxHeadline is="h2">Persönliche Daten</OnyxHeadline>
+  <div class="page">
+    <!-- Step headline keeps the wizard consistent -->
+    <OnyxHeadline is="h2">Persönliche Daten</OnyxHeadline>
 
-  <OnyxForm class="form" @submit.prevent="handleSubmit">
-    <!-- Core identity information -->
-    <div class="vorUndNachname">
-      <OnyxInput label="Vorname" v-model="inputVorname" required />
-      <OnyxInput label="Nachname" v-model="inputNachname" required />
-    </div>
-
-    <div class="ausweisdaten">
-      <OnyxInput label="Ausweisnummer" v-model="inputAusweis" required class="ausweisnummer" />
-      <div class="radio-inline">
-        <OnyxRadioGroup label="Ausweistyp" v-model="ausweisTyp" :options="options3" required />
+    <OnyxForm class="form" @submit.prevent="handleSubmit">
+      <!-- Core identity information -->
+      <div class="vorUndNachname">
+        <OnyxInput label="Vorname" v-model="inputVorname" required />
+        <OnyxInput label="Nachname" v-model="inputNachname" required />
       </div>
-    </div>
 
-    <OnyxInput label="Handynummer" v-model="inputNummer" required />
-    <OnyxInput label="Matrikelnummer" v-model="inputMatrikelNr" required />
-    <OnyxInput label="Email-Adresse" v-model="inputEmail" required />
+      <div class="ausweisdaten">
+        <OnyxInput label="Ausweisnummer" v-model="inputAusweis" required class="ausweisnummer" />
+        <div class="radio-inline">
+          <OnyxRadioGroup label="Ausweistyp" v-model="ausweisTyp" :options="options3" required />
+        </div>
+      </div>
 
+      <OnyxInput label="Handynummer" v-model="inputNummer" required />
+      <OnyxInput label="Matrikelnummer" v-model="inputMatrikelNr" required />
+      <OnyxInput label="Email-Adresse" v-model="inputEmail" required />
 
-    <!-- Travel preference helps the organisers coordinate logistics -->
-    <OnyxSelect
-      label="Wie reisen Sie an?"
-      listLabel="List label"
-      v-model="travel"
-      v-model:open="travelOpen"
-      :options="options1"
-      placeholder="Anreisen mit dem..."
-    />
+      <!-- Travel preference helps the organisers coordinate logistics -->
+      <OnyxSelect
+        label="Wie reisen Sie an?"
+        listLabel="List label"
+        v-model="travel"
+        v-model:open="travelOpen"
+        :options="options1"
+        placeholder="Anreisen mit dem..."
+      />
 
-    <!-- Show plane-specific field only when relevant -->
-    <OnyxInput
-      v-if="travel === 'flugzeug'"
-      v-model="inputFlugzeug"
-      label="Flugnummer"
-      placeholder="Flugnummer eingeben..."
-    />
+      <!-- Show plane-specific field only when relevant -->
+      <OnyxInput
+        v-if="travel === 'flugzeug'"
+        v-model="inputFlugzeug"
+        label="Flugnummer"
+        placeholder="Flugnummer eingeben..."
+      />
 
-    <!-- Capture whether the participant travels solo or with company -->
-    <OnyxSelect
-      label="Kommen Sie alleine oder in einer Gruppe?"
-      listLabel="List label"
-      v-model="company"
-      v-model:open="companyOpen"
-      :options="options2"
-      placeholder="Bin ich alleine?"
-    />
+      <!-- Capture whether the participant travels solo or with company -->
+      <OnyxSelect
+        label="Kommen Sie alleine oder in einer Gruppe?"
+        listLabel="List label"
+        v-model="company"
+        v-model:open="companyOpen"
+        :options="options2"
+        placeholder="Bin ich alleine?"
+      />
 
-  <!-- Navigation buttons to move between wizard steps -->
-  <div class="VorZurueck">
-    <OnyxButton label="Vorherige Seite" type="button" @click="goBack" />
-    <OnyxButton label="Weiter" type="submit" />
+      <!-- Navigation buttons to move between wizard steps -->
+      <div class="wizard-nav">
+        <OnyxButton label="Vorherige Seite" type="button" :icon="iconArrowSmallLeft" @click="goBack" />
+        <OnyxButton label="Weiter" type="submit" :icon="iconArrowSmallRight" icon-position="right" />
+      </div>
+    </OnyxForm>
   </div>
-
-  </OnyxForm>
 </template>
 
 <style>
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
 .form {
   max-width: 100%;
   display: flex;
   flex-direction: column;
   gap: var(--onyx-grid-gutter);
+  flex: 1;
 }
 
 .vorUndNachname {
@@ -254,5 +263,13 @@ function goBack() {
 .radio-inline .onyx-radio-group {
   display: flex;
   gap: 2rem; /* Abstand zwischen den Buttons */
+}
+
+.wizard-nav {
+  display: flex;
+  gap: 1rem;
+  margin-top: auto;
+  padding-bottom: 2rem;
+  justify-content: flex-start;
 }
 </style>
